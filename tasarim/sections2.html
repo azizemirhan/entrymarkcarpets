@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Mark — Teknik Özellikler</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Outfit:wght@200;300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark: #2D3748;
+  --navy: #215387;
+  --gold: #f5a524;
+  --light: #F7F8F8;
+  --gold-muted: #DDA944;
+  --cream: #FAF8F5;
+  --dark-90: rgba(45,55,72,0.9);
+  --dark-70: rgba(45,55,72,0.7);
+  --dark-50: rgba(45,55,72,0.5);
+  --dark-30: rgba(45,55,72,0.3);
+  --dark-10: rgba(45,55,72,0.1);
+  --dark-05: rgba(45,55,72,0.05);
+  --navy-08: rgba(33,83,135,0.08);
+  --gold-12: rgba(245,165,36,0.12);
+  --gold-06: rgba(245,165,36,0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 2px 8px rgba(45,55,72,0.05);
+  --shadow-md: 0 8px 30px rgba(45,55,72,0.08);
+  --shadow-lg: 0 20px 50px rgba(45,55,72,0.1);
+  --transition: cubic-bezier(0.4,0,0.2,1);
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Outfit',sans-serif; color:var(--dark); background:var(--cream); -webkit-font-smoothing:antialiased; }
+button { border:none; background:none; cursor:pointer; font-family:inherit; }
+
+/* ════════════════════════════════════════════
+   TECHNICAL SPECS SECTION
+   ════════════════════════════════════════════ */
+.specs-section {
+  padding:120px 60px;
+  position:relative;
+  overflow:hidden;
+  background:var(--cream);
+}
+
+/* Decorative elements */
+.specs-section::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--dark-10), transparent);
+}
+
+.specs-deco-grid {
+  position:absolute;
+  top:0;
+  right:0;
+  width:400px;
+  height:400px;
+  opacity:0.025;
+  background-image:
+    linear-gradient(var(--dark) 1px, transparent 1px),
+    linear-gradient(90deg, var(--dark) 1px, transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+}
+
+.specs-deco-circle {
+  position:absolute;
+  bottom:-180px;
+  left:-120px;
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  border:1px solid rgba(33,83,135,0.04);
+  pointer-events:none;
+}
+
+.specs-deco-circle::after {
+  content:'';
+  position:absolute;
+  inset:40px;
+  border-radius:50%;
+  border:1px solid rgba(245,165,36,0.03);
+}
+
+/* ── HEADER ── */
+.specs-header {
+  max-width:1360px;
+  margin:0 auto 70px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+
+.specs-eyebrow {
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.specs-eyebrow-line {
+  width:32px;
+  height:1.5px;
+  background:var(--gold);
+}
+
+.specs-eyebrow-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:4.5px;
+  color:var(--gold-muted);
+}
+
+.specs-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(34px,3.5vw,52px);
+  font-weight:700;
+  line-height:1.12;
+  color:var(--dark);
+  margin-bottom:16px;
+}
+
+.specs-title em {
+  font-style:italic;
+  color:var(--navy);
+  position:relative;
+}
+
+.specs-title em::after {
+  content:'';
+  position:absolute;
+  bottom:2px;
+  left:0;
+  width:100%;
+  height:6px;
+  background:rgba(33,83,135,0.07);
+  border-radius:3px;
+  z-index:-1;
+}
+
+.specs-subtitle {
+  font-size:16.5px;
+  color:var(--dark-50);
+  line-height:1.7;
+  max-width:620px;
+  margin:0 auto;
+  font-weight:300;
+}
+
+/* ── STATS COUNTERS ── */
+.specs-counters {
+  max-width:1360px;
+  margin:0 auto 70px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  position:relative;
+  z-index:2;
+}
+
+.counter-card {
+  background:#fff;
+  border-radius:var(--radius);
+  padding:30px 24px;
+  text-align:center;
+  border:1px solid var(--dark-05);
+  position:relative;
+  overflow:hidden;
+  transition:all 0.4s var(--transition);
+}
+
+.counter-card:hover {
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+  border-color:transparent;
+}
+
+.counter-card::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-muted));
+  transform:scaleX(0);
+  transition:transform 0.5s var(--transition);
+  transform-origin:left;
+}
+
+.counter-card:hover::before { transform:scaleX(1); }
+
+.counter-icon {
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 16px;
+  transition:all 0.4s ease;
+}
+
+.counter-card:nth-child(1) .counter-icon { background:rgba(33,83,135,0.07); }
+.counter-card:nth-child(2) .counter-icon { background:var(--gold-06); }
+.counter-card:nth-child(3) .counter-icon { background:rgba(45,55,72,0.05); }
+.counter-card:nth-child(4) .counter-icon { background:rgba(34,168,103,0.07); }
+
+.counter-card:hover .counter-icon { transform:scale(1.08); }
+
+.counter-icon svg { width:24px; height:24px; stroke-width:1.8; }
+.counter-card:nth-child(1) .counter-icon svg { color:var(--navy); }
+.counter-card:nth-child(2) .counter-icon svg { color:var(--gold); }
+.counter-card:nth-child(3) .counter-icon svg { color:var(--dark); }
+.counter-card:nth-child(4) .counter-icon svg { color:#22a867; }
+
+.counter-value {
+  font-family:'Playfair Display',serif;
+  font-size:36px;
+  font-weight:700;
+  color:var(--dark);
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.counter-value .counter-unit {
+  font-size:18px;
+  font-weight:500;
+  color:var(--dark-50);
+  margin-left:2px;
+}
+
+.counter-label {
+  font-size:13px;
+  color:var(--dark-50);
+  font-weight:400;
+}
+
+/* ── MAIN SPECS GRID ── */
+.specs-main {
+  max-width:1360px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  position:relative;
+  z-index:2;
+}
+
+/* Spec panel */
+.spec-panel {
+  background:#fff;
+  border-radius:20px;
+  border:1px solid var(--dark-05);
+  overflow:hidden;
+  transition:all 0.4s var(--transition);
+}
+
+.spec-panel:hover {
+  box-shadow:var(--shadow-md);
+  border-color:transparent;
+}
+
+.spec-panel-header {
+  padding:28px 32px 0;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:24px;
+}
+
+.spec-panel-icon {
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.spec-panel-icon svg { width:22px; height:22px; stroke-width:1.8; }
+
+.spec-panel:nth-child(1) .spec-panel-icon { background:rgba(33,83,135,0.08); }
+.spec-panel:nth-child(1) .spec-panel-icon svg { color:var(--navy); }
+.spec-panel:nth-child(2) .spec-panel-icon { background:var(--gold-06); }
+.spec-panel:nth-child(2) .spec-panel-icon svg { color:var(--gold); }
+
+.spec-panel-title {
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  font-weight:700;
+  color:var(--dark);
+}
+
+.spec-panel-subtitle {
+  font-size:12.5px;
+  color:var(--dark-30);
+  margin-top:1px;
+}
+
+/* Spec list */
+.spec-list {
+  padding:0 32px 32px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.spec-item {
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--dark-05);
+  transition:all 0.3s ease;
+}
+
+.spec-item:last-child { border-bottom:none; }
+
+.spec-item:hover {
+  padding-left:6px;
+}
+
+.spec-item-dot {
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  margin-top:1px;
+  transition:all 0.3s ease;
+}
+
+.spec-panel:nth-child(1) .spec-item-dot { background:rgba(33,83,135,0.06); }
+.spec-panel:nth-child(2) .spec-item-dot { background:var(--gold-06); }
+
+.spec-item:hover .spec-item-dot { transform:scale(1.1); }
+
+.spec-item-dot svg { width:13px; height:13px; stroke-width:2.5; }
+.spec-panel:nth-child(1) .spec-item-dot svg { color:var(--navy); }
+.spec-panel:nth-child(2) .spec-item-dot svg { color:var(--gold); }
+
+.spec-item-text {
+  font-size:14.5px;
+  color:var(--dark-70);
+  line-height:1.55;
+  flex:1;
+}
+
+.spec-item-text strong {
+  color:var(--dark);
+  font-weight:600;
+}
+
+.spec-item-text .spec-highlight {
+  display:inline-block;
+  padding:2px 8px;
+  background:var(--navy-08);
+  border-radius:5px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--navy);
+  margin-left:4px;
+}
+
+.spec-item-text .spec-highlight.gold {
+  background:var(--gold-06);
+  color:var(--gold-muted);
+}
+
+/* ── FULL WIDTH DETAIL BAR ── */
+.specs-detail-bar {
+  max-width:1360px;
+  margin:24px auto 0;
+  background:linear-gradient(135deg, var(--dark) 0%, #1a2538 50%, var(--navy) 100%);
+  border-radius:20px;
+  padding:44px 48px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  position:relative;
+  z-index:2;
+  overflow:hidden;
+}
+
+.specs-detail-bar::before {
+  content:'';
+  position:absolute;
+  top:-60px;
+  right:-60px;
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(245,165,36,0.06),transparent 70%);
+  pointer-events:none;
+}
+
+.specs-detail-bar::after {
+  content:'';
+  position:absolute;
+  bottom:-40px;
+  left:20%;
+  width:200px;
+  height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(33,83,135,0.08),transparent 70%);
+  pointer-events:none;
+}
+
+.detail-item {
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  position:relative;
+  z-index:1;
+}
+
+.detail-icon {
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:all 0.3s ease;
+}
+
+.detail-item:hover .detail-icon {
+  background:rgba(245,165,36,0.1);
+  border-color:rgba(245,165,36,0.15);
+  transform:scale(1.05);
+}
+
+.detail-icon svg { width:20px; height:20px; color:var(--gold); stroke-width:1.8; }
+
+.detail-label {
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  color:rgba(255,255,255,0.35);
+  margin-bottom:4px;
+}
+
+.detail-value {
+  font-size:15px;
+  font-weight:600;
+  color:#fff;
+  line-height:1.4;
+}
+
+.detail-value .detail-sub {
+  font-size:12px;
+  font-weight:400;
+  color:rgba(255,255,255,0.4);
+  display:block;
+  margin-top:2px;
+}
+
+/* ── CERTIFICATIONS ── */
+.specs-certs {
+  max-width:1360px;
+  margin:50px auto 0;
+  position:relative;
+  z-index:2;
+}
+
+.certs-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+}
+
+.certs-title {
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--dark);
+}
+
+.certs-line {
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg, var(--dark-10), transparent);
+  margin-left:24px;
+}
+
+.certs-grid {
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:16px;
+}
+
+.cert-card {
+  background:#fff;
+  border-radius:var(--radius);
+  border:1px solid var(--dark-05);
+  padding:24px 16px;
+  text-align:center;
+  transition:all 0.4s var(--transition);
+  cursor:default;
+  position:relative;
+  overflow:hidden;
+}
+
+.cert-card:hover {
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+  border-color:rgba(33,83,135,0.1);
+}
+
+.cert-card::after {
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:2px;
+  background:linear-gradient(90deg, var(--navy), var(--gold));
+  transform:scaleX(0);
+  transition:transform 0.4s var(--transition);
+}
+
+.cert-card:hover::after { transform:scaleX(1); }
+
+.cert-icon-wrap {
+  width:56px;
+  height:56px;
+  border-radius:14px;
+  background:var(--dark-05);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 14px;
+  transition:all 0.3s ease;
+}
+
+.cert-card:hover .cert-icon-wrap {
+  background:var(--navy-08);
+  transform:scale(1.06);
+}
+
+.cert-icon-wrap svg { width:26px; height:26px; color:var(--navy); stroke-width:1.6; }
+
+.cert-name {
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--dark);
+  margin-bottom:3px;
+  line-height:1.3;
+}
+
+.cert-code {
+  font-size:10.5px;
+  color:var(--dark-30);
+  font-weight:500;
+  letter-spacing:0.3px;
+}
+
+/* CE Badge — special larger card */
+.cert-card.ce-card {
+  grid-column:span 2;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:24px 28px;
+  text-align:left;
+  background:linear-gradient(135deg, var(--dark) 0%, var(--navy) 100%);
+  border-color:transparent;
+}
+
+.cert-card.ce-card:hover {
+  box-shadow:0 12px 40px rgba(45,55,72,0.2);
+}
+
+.cert-card.ce-card::after { display:none; }
+
+.ce-logo {
+  width:72px;
+  height:72px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.ce-logo span {
+  font-family:'Outfit',sans-serif;
+  font-size:32px;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:2px;
+}
+
+.ce-text-wrap { flex:1; }
+
+.ce-title {
+  font-size:16px;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:4px;
+}
+
+.ce-desc {
+  font-size:12.5px;
+  color:rgba(255,255,255,0.45);
+  line-height:1.5;
+}
+
+/* ── MADE IN TURKEY BADGE ── */
+.made-in-badge {
+  max-width:1360px;
+  margin:40px auto 0;
+  background:#fff;
+  border-radius:var(--radius);
+  border:1px solid var(--dark-05);
+  padding:28px 36px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  position:relative;
+  z-index:2;
+  overflow:hidden;
+  transition:all 0.4s var(--transition);
+}
+
+.made-in-badge:hover {
+  box-shadow:var(--shadow-md);
+  border-color:transparent;
+}
+
+.made-in-badge::before {
+  content:'';
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:linear-gradient(180deg,#E30A17,var(--gold));
+  border-radius:4px 0 0 4px;
+}
+
+.made-in-flag {
+  width:56px;
+  height:56px;
+  border-radius:14px;
+  background:linear-gradient(135deg, #E30A17, #c00);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+
+.made-in-flag::after {
+  content:'☪';
+  font-size:24px;
+  color:#fff;
+  line-height:1;
+}
+
+.made-in-content { flex:1; }
+
+.made-in-title {
+  font-size:16px;
+  font-weight:700;
+  color:var(--dark);
+  margin-bottom:3px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.made-in-title .turkey-tag {
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  padding:3px 10px;
+  background:rgba(227,10,23,0.08);
+  color:#E30A17;
+  border-radius:5px;
+}
+
+.made-in-desc {
+  font-size:13.5px;
+  color:var(--dark-50);
+  line-height:1.6;
+}
+
+.made-in-badges {
+  display:flex;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.quality-badge {
+  width:52px;
+  height:52px;
+  border-radius:12px;
+  background:var(--dark-05);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.3s ease;
+}
+
+.quality-badge:hover {
+  background:var(--navy-08);
+  transform:scale(1.08);
+}
+
+.quality-badge svg { width:24px; height:24px; color:var(--navy); stroke-width:1.8; }
+
+/* ════════════════════════════════════════════
+   SCROLL REVEAL
+   ════════════════════════════════════════════ */
+.reveal {
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity 0.7s var(--transition), transform 0.7s var(--transition);
+}
+
+.reveal.visible {
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
+@media (max-width:1100px) {
+  .specs-section { padding:80px 30px; }
+  .specs-counters { grid-template-columns:repeat(2,1fr); }
+  .specs-detail-bar { grid-template-columns:repeat(2,1fr); }
+  .certs-grid { grid-template-columns:repeat(3,1fr); }
+  .cert-card.ce-card { grid-column:span 1; flex-direction:column; text-align:center; padding:24px 16px; }
+  .ce-logo { margin:0 auto; }
+}
+
+@media (max-width:768px) {
+  .specs-main { grid-template-columns:1fr; }
+  .specs-section { padding:60px 20px; }
+  .specs-counters { grid-template-columns:1fr 1fr; }
+  .specs-detail-bar { grid-template-columns:1fr; padding:32px 28px; }
+  .certs-grid { grid-template-columns:repeat(2,1fr); }
+  .cert-card.ce-card { grid-column:span 2; }
+  .made-in-badge { flex-direction:column; text-align:center; padding:28px 24px; }
+  .made-in-badges { justify-content:center; }
+}
+
+@media (max-width:480px) {
+  .specs-counters { grid-template-columns:1fr; }
+  .certs-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<section class="specs-section">
+
+  <!-- Decorative -->
+  <div class="specs-deco-grid"></div>
+  <div class="specs-deco-circle"></div>
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="specs-header reveal">
+    <div class="specs-eyebrow">
+      <span class="specs-eyebrow-line"></span>
+      <span class="specs-eyebrow-text">Teknik Detaylar</span>
+      <span class="specs-eyebrow-line"></span>
+    </div>
+    <h2 class="specs-title">Teknik <em>Özellikler</em></h2>
+    <p class="specs-subtitle">ECONYL® sertifikalı malzemeler ve CNC lazer teknolojisi ile üretilen premium paspaslarımızın tüm teknik detaylarını keşfedin.</p>
+  </div>
+
+  <!-- ═══ STAT COUNTERS ═══ -->
+  <div class="specs-counters reveal">
+    <div class="counter-card">
+      <div class="counter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.38 3.46L16 2 12 3.46 8 2 3.62 3.46a2 2 0 0 0-1.34 1.89v13.1a2 2 0 0 0 2.66 1.89L8 19l4-1.46L16 19l4.38-1.54a2 2 0 0 0 1.34-1.89V5.35a2 2 0 0 0-1.34-1.89z"/><path d="M12 22V8"/></svg>
+      </div>
+      <div class="counter-value"><span class="count" data-target="1900">0</span><span class="counter-unit">gr/m²</span></div>
+      <div class="counter-label">Toplam Ağırlık</div>
+    </div>
+    <div class="counter-card">
+      <div class="counter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 3H3v18h18V3z"/><path d="M21 9H3"/><path d="M21 15H3"/></svg>
+      </div>
+      <div class="counter-value"><span class="count" data-target="10">0</span><span class="counter-unit">mm</span></div>
+      <div class="counter-label">Kalınlık</div>
+    </div>
+    <div class="counter-card">
+      <div class="counter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="counter-value"><span class="count" data-target="100">0</span><span class="counter-unit">%</span></div>
+      <div class="counter-label">ECONYL® Poliamid</div>
+    </div>
+    <div class="counter-card">
+      <div class="counter-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="counter-value">Ev <span class="count" data-target="23">0</span></div>
+      <div class="counter-label">Kullanım Sınıfı</div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN SPECS PANELS ═══ -->
+  <div class="specs-main">
+
+    <!-- LEFT: Teknik Özellikler -->
+    <div class="spec-panel reveal">
+      <div class="spec-panel-header">
+        <div class="spec-panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <div>
+          <div class="spec-panel-title">Üretim & Malzeme</div>
+          <div class="spec-panel-subtitle">Teknik spesifikasyonlar</div>
+        </div>
+      </div>
+      <div class="spec-list">
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>CNC lazer teknolojisiyle</strong> üretilmiş yüksek kaliteli paspas</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Kauçuk kenar</strong> ile güvenlik takviyeli yapı</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>NYLON & POLYAMID</strong> elyaflar · Kalınlık <span class="spec-highlight">10mm</span></div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>VINYL alt tabaka</strong> — iç ve dış mekân uygulamaları</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Dış malzeme: <strong>%100 ECONYL®</strong> markalı poliamid elyaf</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Arka yüzey: <strong>%100 nitril kauçuk</strong>, güvenlik kenarı takviyeli</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Toplam ağırlık: <strong>1900 gr/m²</strong> (+/- %15) <span class="spec-highlight">OIN 8543</span></div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Yanıcılık: <strong>Efl</strong> <span class="spec-highlight">EN 13501-1</span></div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Bakım: Halı için özel tasarlanmış temizleyici içeren <strong>sabunlu su ve bir fırça</strong> kullanın</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Özellikler & Avantajlar -->
+    <div class="spec-panel reveal" style="transition-delay:0.12s;">
+      <div class="spec-panel-header">
+        <div class="spec-panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div>
+          <div class="spec-panel-title">Performans & Avantajlar</div>
+          <div class="spec-panel-subtitle">Ürün özellikleri</div>
+        </div>
+      </div>
+      <div class="spec-list">
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Yüksek kir ve nem emme</strong> özelliği ile üstün hijyen</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Takılma ve kayma riski</strong> minimuma indirilmiştir</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Güvenlik kenarı</strong> güçlendirilmiş yapı</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Kaymaz nitril kauçuk taban</strong> — maksimum stabilite</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Zor alev alır</strong> — güvenlik standartlarına uygun <span class="spec-highlight gold">Efl Sınıfı</span></div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text">Yoğun alan kullanımı: <span class="spec-highlight">EN ISO 10874</span></div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Üstün kalite ve hizmet garantisi</strong> ile müşteri memnuniyeti</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-item-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="spec-item-text"><strong>Çok hızlı teslimat</strong> süreleri — Express 72 saat seçeneği</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ DETAIL BAR ═══ -->
+  <div class="specs-detail-bar reveal">
+    <div class="detail-item">
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="detail-label">Dış Malzeme</div>
+        <div class="detail-value">%100 ECONYL®<span class="detail-sub">Poliamid elyaf</span></div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+      </div>
+      <div>
+        <div class="detail-label">Alt Tabaka</div>
+        <div class="detail-value">%100 Nitril Kauçuk<span class="detail-sub">Güvenlik kenarı takviyeli</span></div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-6h6v6"/></svg>
+      </div>
+      <div>
+        <div class="detail-label">Kullanım Sınıfı</div>
+        <div class="detail-value">Ev 23, Yoğun Alanlar<span class="detail-sub">EN ISO 10874</span></div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="detail-label">Yanıcılık</div>
+        <div class="detail-value">Efl Sınıfı<span class="detail-sub">EN 13501-1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CERTIFICATIONS ═══ -->
+  <div class="specs-certs reveal">
+    <div class="certs-header">
+      <h3 class="certs-title">Sertifikalar & Zemin Sembolleri</h3>
+      <div class="certs-line"></div>
+    </div>
+    <div class="certs-grid">
+
+      <div class="cert-card">
+        <div class="cert-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="cert-name">Yangın Dayanımı</div>
+        <div class="cert-code">Efl — EN 13501-1</div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-6h6v6"/></svg>
+        </div>
+        <div class="cert-name">Genel Kullanım</div>
+        <div class="cert-code">Ev 23 — EN ISO 10874</div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.38 3.46L16 2 12 3.46 8 2 3.62 3.46a2 2 0 0 0-1.34 1.89v13.1a2 2 0 0 0 2.66 1.89L8 19l4-1.46L16 19l4.38-1.54a2 2 0 0 0 1.34-1.89V5.35a2 2 0 0 0-1.34-1.89z"/></svg>
+        </div>
+        <div class="cert-name">Ağırlık Standardı</div>
+        <div class="cert-code">1900 gr/m² — OIN 8543</div>
+      </div>
+
+      <div class="cert-card">
+        <div class="cert-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="cert-name">Kaymaz Zemin</div>
+        <div class="cert-code">Nitril Kauçuk DS</div>
+      </div>
+
+      <div class="cert-card ce-card">
+        <div class="ce-logo"><span>CE</span></div>
+        <div class="ce-text-wrap">
+          <div class="ce-title">CE Sertifikası</div>
+          <div class="ce-desc">Avrupa Birliği uygunluk standartlarını karşılayan, güvenlik ve kalite sertifikalı üretim.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ MADE IN TURKEY ═══ -->
+  <div class="made-in-badge reveal">
+    <div class="made-in-flag"></div>
+    <div class="made-in-content">
+      <div class="made-in-title">
+        Tüm Paspaslar Türkiye'de Üretilmiştir
+        <span class="turkey-tag">Made in Türkiye</span>
+      </div>
+      <div class="made-in-desc">Size üstün kalite ve hizmet garantisi veriyoruz! ECONYL® sertifikalı malzemeler, CNC lazer teknolojisi ve alanında uzman ekibimiz ile üretim yapmaktayız.</div>
+    </div>
+    <div class="made-in-badges">
+      <div class="quality-badge" title="Kalite Garantisi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="quality-badge" title="Hızlı Teslimat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="quality-badge" title="Sürdürülebilir Üretim">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════ -->
+<script>
+(() => {
+
+  // ── SCROLL REVEAL ──
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.15 });
+
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // ── COUNTER ANIMATION ──
+  const counters = document.querySelectorAll('.count');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.dataset.target);
+        const duration = 1800;
+        const startTime = performance.now();
+
+        function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = easeOutQuart(progress);
+          el.textContent = Math.round(target * eased);
+          if (progress < 1) requestAnimationFrame(update);
+        }
+
+        requestAnimationFrame(update);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold:0.5 });
+
+  counters.forEach(c => counterObserver.observe(c));
+
+  // ── STAGGER SPEC ITEMS ──
+  const specItems = document.querySelectorAll('.spec-item');
+  const itemObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const panel = entry.target.closest('.spec-panel');
+        if (panel && !panel.dataset.animated) {
+          panel.dataset.animated = 'true';
+          const items = panel.querySelectorAll('.spec-item');
+          items.forEach((item, i) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-12px)';
+            item.style.transition = `opacity 0.5s ${i * 0.06}s ease, transform 0.5s ${i * 0.06}s ease`;
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateX(0)';
+              });
+            });
+          });
+        }
+        itemObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.2 });
+
+  specItems.forEach(item => itemObserver.observe(item));
+
+  // ── STAGGER CERT CARDS ──
+  const certCards = document.querySelectorAll('.cert-card');
+  const certObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        certCards.forEach((card, i) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(16px)';
+          card.style.transition = `opacity 0.5s ${i * 0.08}s ease, transform 0.5s ${i * 0.08}s ease, box-shadow 0.4s ease, border-color 0.4s ease`;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            });
+          });
+        });
+        certObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.2 });
+
+  if (certCards.length) certObserver.observe(certCards[0]);
+
+})();
+</script>
+</body>
+</html>

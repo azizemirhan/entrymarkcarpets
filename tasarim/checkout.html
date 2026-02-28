@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Mark — Ödeme</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#2D3748;--navy:#215387;--gold:#f5a524;--light:#F7F8F8;--gold-muted:#DDA944;--cream:#FAF8F5;--dark-90:rgba(45,55,72,.9);--dark-70:rgba(45,55,72,.7);--dark-50:rgba(45,55,72,.5);--dark-30:rgba(45,55,72,.3);--dark-10:rgba(45,55,72,.1);--dark-05:rgba(45,55,72,.05);--navy-08:rgba(33,83,135,.08);--gold-12:rgba(245,165,36,.12);--gold-06:rgba(245,165,36,.06);--red:#E53E3E;--green:#22a867;--radius:16px;--radius-sm:10px;--shadow-sm:0 2px 8px rgba(45,55,72,.05);--shadow-md:0 8px 30px rgba(45,55,72,.08);--transition:cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--cream);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{border:none;background:none;cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+a{text-decoration:none;color:inherit}
+
+.checkout-page{max-width:1360px;margin:0 auto;padding:48px 60px 80px}
+
+/* ═══ BREADCRUMB ═══ */
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--dark-30)}
+.breadcrumb a{color:var(--dark-50);transition:color .3s}
+.breadcrumb a:hover{color:var(--navy)}
+.breadcrumb svg{width:12px;height:12px;opacity:.4}
+
+/* ═══ HEADER ═══ */
+.page-header{margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--dark-10)}
+.page-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.page-title-sub{font-size:14px;color:var(--dark-30)}
+
+/* ═══ STEPS BAR ═══ */
+.steps-bar{display:flex;align-items:center;gap:0;margin-bottom:44px;padding:20px 28px;background:#fff;border-radius:var(--radius);border:1px solid var(--dark-05);position:relative;overflow:hidden}
+.step{display:flex;align-items:center;gap:12px;flex:1;position:relative;z-index:1;cursor:pointer;padding:8px 0;transition:all .3s}
+.step:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:calc(100% - 44px);height:2px;background:var(--dark-05);left:44px;z-index:-1}
+.step.completed:not(:last-child)::after{background:var(--gold)}
+.step-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid var(--dark-10);color:var(--dark-30);transition:all .4s var(--transition);flex-shrink:0;background:#fff;position:relative;z-index:2}
+.step.active .step-num{border-color:var(--gold);background:linear-gradient(135deg,var(--gold),var(--gold-muted));color:var(--dark)}
+.step.completed .step-num{border-color:var(--green);background:var(--green);color:#fff}
+.step.completed .step-num span{display:none}
+.step.completed .step-num::after{content:'✓';font-size:14px}
+.step-text{display:flex;flex-direction:column}
+.step-label{font-size:13px;font-weight:600;color:var(--dark-30);transition:color .3s}
+.step.active .step-label,.step.completed .step-label{color:var(--dark)}
+.step-desc{font-size:11px;color:var(--dark-30)}
+
+/* ═══ LAYOUT ═══ */
+.checkout-layout{display:grid;grid-template-columns:1fr 400px;gap:36px;align-items:start}
+
+/* ═══ FORM SECTIONS ═══ */
+.form-section{background:#fff;border-radius:20px;border:1px solid var(--dark-05);overflow:hidden;margin-bottom:20px;display:none}
+.form-section.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.form-section-header{padding:24px 28px 18px;border-bottom:1px solid var(--dark-05);display:flex;align-items:center;gap:14px}
+.form-section-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.form-section-icon svg{width:20px;height:20px;stroke-width:1.8}
+.form-section-icon.shipping{background:var(--navy-08)}
+.form-section-icon.shipping svg{color:var(--navy)}
+.form-section-icon.payment{background:var(--gold-06)}
+.form-section-icon.payment svg{color:var(--gold)}
+.form-section-icon.review{background:rgba(34,168,103,.08)}
+.form-section-icon.review svg{color:var(--green)}
+.form-section-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark)}
+
+.form-body{padding:28px}
+
+/* ═══ FORM FIELDS ═══ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid .full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--dark-50)}
+.form-label .required{color:var(--red);margin-left:2px}
+.form-input{padding:13px 16px;border:1.5px solid var(--dark-10);border-radius:var(--radius-sm);font-size:14.5px;color:var(--dark);outline:none;transition:all .3s;background:var(--light)}
+.form-input:focus{border-color:var(--navy);background:#fff;box-shadow:0 0 0 3px rgba(33,83,135,.06)}
+.form-input::placeholder{color:var(--dark-30)}
+.form-input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(229,62,62,.06)}
+select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232D3748' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+
+/* ═══ PAYMENT METHOD CARDS ═══ */
+.payment-methods{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.pay-method{padding:18px 20px;border:1.5px solid var(--dark-10);border-radius:var(--radius);display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .3s var(--transition);position:relative}
+.pay-method:hover{border-color:var(--navy);background:var(--navy-08)}
+.pay-method.active{border-color:var(--gold);background:var(--gold-06);box-shadow:0 0 0 3px rgba(245,165,36,.08)}
+.pay-method-radio{width:20px;height:20px;border:2px solid var(--dark-10);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+.pay-method.active .pay-method-radio{border-color:var(--gold)}
+.pay-method.active .pay-method-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.pay-method-icon{width:44px;height:30px;border:1px solid var(--dark-10);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--dark-50);background:#fff;flex-shrink:0}
+.pay-method-text{flex:1}
+.pay-method-name{font-size:14px;font-weight:600;color:var(--dark)}
+.pay-method-desc{font-size:12px;color:var(--dark-30)}
+
+/* ═══ CREDIT CARD UI ═══ */
+.card-preview{margin-bottom:28px;perspective:1000px}
+.card-face{width:100%;max-width:400px;aspect-ratio:1.586;border-radius:18px;padding:28px 30px;position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,var(--dark) 0%,#1a2538 50%,var(--navy) 100%);box-shadow:0 20px 50px rgba(45,55,72,.2);transition:transform .6s}
+.card-face::before{content:'';position:absolute;top:-50%;right:-30%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,165,36,.08),transparent 70%)}
+.card-face::after{content:'';position:absolute;bottom:-30%;left:-20%;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(33,83,135,.12),transparent 70%)}
+.card-chip{width:42px;height:32px;border-radius:6px;background:linear-gradient(135deg,#d4af37,#f5d78e);margin-bottom:24px;position:relative;z-index:1}
+.card-chip::after{content:'';position:absolute;inset:4px;border:1px solid rgba(0,0,0,.1);border-radius:3px}
+.card-number{font-size:20px;font-weight:500;letter-spacing:3px;margin-bottom:24px;position:relative;z-index:1;font-family:'Outfit',monospace}
+.card-bottom{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
+.card-holder-label,.card-expiry-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.4);margin-bottom:2px}
+.card-holder-value,.card-expiry-value{font-size:14px;font-weight:500;letter-spacing:1px}
+.card-brand{position:absolute;top:24px;right:28px;font-size:22px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:2px;z-index:1}
+
+/* ═══ BANK TRANSFER ═══ */
+.bank-info{padding:20px;background:var(--navy-08);border-radius:var(--radius);margin-top:4px}
+.bank-info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(33,83,135,.06)}
+.bank-info-row:last-child{border-bottom:none}
+.bank-info-label{font-size:13px;color:var(--dark-50)}
+.bank-info-value{font-size:13.5px;font-weight:600;color:var(--dark);display:flex;align-items:center;gap:6px}
+.copy-btn{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--dark-30);transition:all .2s}
+.copy-btn:hover{background:var(--navy-08);color:var(--navy)}
+.copy-btn svg{width:13px;height:13px}
+
+/* ═══ REVIEW ORDER ═══ */
+.review-items{display:flex;flex-direction:column;gap:0}
+.review-item{display:flex;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--dark-05)}
+.review-item:last-child{border-bottom:none}
+.review-item-img{width:72px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.review-item-img .ri-texture{position:absolute;inset:0;opacity:.07;background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.12) 4px,rgba(255,255,255,.12) 5px)}
+.review-item-img .ri-frame{position:absolute;inset:4px;border:1px solid rgba(255,255,255,.1);border-radius:7px}
+.review-item-info{flex:1}
+.review-item-name{font-size:14px;font-weight:600;color:var(--dark)}
+.review-item-meta{font-size:12px;color:var(--dark-30)}
+.review-item-price{font-size:15px;font-weight:700;color:var(--dark);flex-shrink:0}
+
+.review-address-card{padding:18px 20px;background:var(--dark-05);border-radius:var(--radius-sm);margin-top:16px}
+.review-address-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-muted);margin-bottom:8px}
+.review-address-text{font-size:14px;color:var(--dark-70);line-height:1.7}
+
+/* ═══ FORM NAVIGATION ═══ */
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--dark-05)}
+.form-back-btn{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:var(--dark-50);padding:12px 20px;border-radius:var(--radius-sm);transition:all .3s}
+.form-back-btn:hover{background:var(--dark-05);color:var(--dark)}
+.form-back-btn svg{width:16px;height:16px}
+.form-next-btn{display:flex;align-items:center;gap:10px;padding:14px 32px;background:linear-gradient(135deg,var(--dark),var(--navy));color:#fff;font-size:14px;font-weight:600;border-radius:var(--radius-sm);letter-spacing:.5px;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.form-next-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(245,165,36,.1),transparent);transition:left .5s}
+.form-next-btn:hover::before{left:100%}
+.form-next-btn:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.form-next-btn svg{width:16px;height:16px;transition:transform .3s}
+.form-next-btn:hover svg{transform:translateX(3px)}
+
+.form-submit-btn{display:flex;align-items:center;gap:10px;padding:16px 40px;background:linear-gradient(135deg,var(--gold),var(--gold-muted));color:var(--dark);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border-radius:14px;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.form-submit-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.form-submit-btn:hover::before{left:100%}
+.form-submit-btn:hover{box-shadow:0 10px 35px rgba(245,165,36,.35);transform:translateY(-2px)}
+.form-submit-btn svg{width:20px;height:20px}
+
+/* ═══ ORDER SUMMARY SIDEBAR ═══ */
+.order-summary{background:#fff;border-radius:20px;border:1px solid var(--dark-05);overflow:hidden;position:sticky;top:30px}
+.summary-header{padding:24px 24px 18px;border-bottom:1px solid var(--dark-05)}
+.summary-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark)}
+.summary-items{padding:16px 24px;border-bottom:1px solid var(--dark-05)}
+.summary-mini-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--dark-05)}
+.summary-mini-item:last-child{border-bottom:none}
+.summary-mini-img{width:44px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.summary-mini-img .sm-tex{position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.12) 3px,rgba(255,255,255,.12) 4px)}
+.summary-mini-info{flex:1;min-width:0}
+.summary-mini-name{font-size:12px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.summary-mini-meta{font-size:10.5px;color:var(--dark-30)}
+.summary-mini-price{font-size:12.5px;font-weight:700;color:var(--dark);flex-shrink:0}
+
+.summary-pricing{padding:16px 24px;display:flex;flex-direction:column;gap:10px}
+.summary-row{display:flex;justify-content:space-between}
+.summary-row-label{font-size:13px;color:var(--dark-50)}
+.summary-row-value{font-size:13px;font-weight:600;color:var(--dark)}
+.summary-row-value.free{color:var(--green)}
+.summary-divider{height:1px;background:var(--dark-10)}
+.summary-total-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0}
+.summary-total-label{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--dark)}
+.summary-total-value{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold)}
+
+.summary-secure{padding:16px 24px;border-top:1px solid var(--dark-05);display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--dark-30)}
+.summary-secure svg{width:13px;height:13px;color:var(--green)}
+
+/* ═══ SUCCESS MODAL ═══ */
+.success-modal{position:fixed;inset:0;z-index:9999;background:rgba(45,55,72,.85);backdrop-filter:blur(15px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .4s}
+.success-modal.active{opacity:1;visibility:visible}
+.success-card{width:480px;max-width:90vw;background:#fff;border-radius:24px;padding:50px 40px;text-align:center;transform:translateY(20px) scale(.96);transition:all .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 40px 100px rgba(0,0,0,.15)}
+.success-modal.active .success-card{transform:translateY(0) scale(1)}
+.success-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green),#34d399);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;animation:successPop .6s .2s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes successPop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-icon svg{width:40px;height:40px;color:#fff;stroke-width:2.5}
+.success-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--dark);margin-bottom:8px}
+.success-text{font-size:15px;color:var(--dark-50);line-height:1.7;margin-bottom:8px}
+.success-order-id{display:inline-block;padding:8px 20px;background:var(--dark-05);border-radius:8px;font-size:14px;font-weight:700;color:var(--dark);letter-spacing:1px;margin-bottom:28px}
+.success-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--dark),var(--navy));color:#fff;font-size:14px;font-weight:600;border-radius:12px;transition:all .4s}
+.success-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.success-btn svg{width:16px;height:16px}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13.5px;display:flex;align-items:center;gap:10px;box-shadow:0 20px 50px rgba(45,55,72,.2);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast svg{width:18px;height:18px;color:var(--gold);flex-shrink:0}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){.checkout-layout{grid-template-columns:1fr 360px}.checkout-page{padding:36px 30px 60px}}
+@media(max-width:900px){.checkout-layout{grid-template-columns:1fr}.order-summary{position:static;order:-1}.steps-bar{overflow-x:auto;gap:0}}
+@media(max-width:600px){.checkout-page{padding:24px 16px 50px}.form-grid{grid-template-columns:1fr}.form-nav{flex-direction:column-reverse;gap:12px}.form-next-btn,.form-submit-btn{width:100%;justify-content:center}.card-face{padding:22px}}
+</style>
+</head>
+<body>
+
+<div class="checkout-page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Anasayfa</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <a href="cart.html">Sepetim</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span style="color:var(--dark)">Ödeme</span>
+  </div>
+
+  <div class="page-header">
+    <h1 class="page-title">Ödeme</h1>
+    <div class="page-title-sub">Siparişinizi tamamlamak için bilgilerinizi girin</div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-bar">
+    <div class="step active" data-step="1"><div class="step-num"><span>1</span></div><div class="step-text"><div class="step-label">Teslimat Adresi</div><div class="step-desc">Kargo bilgileri</div></div></div>
+    <div class="step" data-step="2"><div class="step-num"><span>2</span></div><div class="step-text"><div class="step-label">Ödeme Yöntemi</div><div class="step-desc">Kart veya havale</div></div></div>
+    <div class="step" data-step="3"><div class="step-num"><span>3</span></div><div class="step-text"><div class="step-label">Sipariş Onayı</div><div class="step-desc">Son kontrol</div></div></div>
+  </div>
+
+  <div class="checkout-layout">
+    <div>
+
+      <!-- STEP 1: Shipping -->
+      <div class="form-section active" id="step1">
+        <div class="form-section-header"><div class="form-section-icon shipping"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="form-section-title">Teslimat Bilgileri</div></div>
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Ad<span class="required">*</span></label><input class="form-input" id="firstName" placeholder="Adınız" required></div>
+            <div class="form-group"><label class="form-label">Soyad<span class="required">*</span></label><input class="form-input" id="lastName" placeholder="Soyadınız" required></div>
+            <div class="form-group full"><label class="form-label">E-posta<span class="required">*</span></label><input class="form-input" id="email" type="email" placeholder="ornek@email.com" required></div>
+            <div class="form-group full"><label class="form-label">Telefon<span class="required">*</span></label><input class="form-input" id="phone" type="tel" placeholder="+90 5XX XXX XX XX" required></div>
+            <div class="form-group full"><label class="form-label">Adres<span class="required">*</span></label><input class="form-input" id="address" placeholder="Sokak, cadde, bina no, daire no" required></div>
+            <div class="form-group"><label class="form-label">İl<span class="required">*</span></label><select class="form-input" id="city"><option value="">Seçiniz</option><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Bursa</option><option>Antalya</option><option>Konya</option><option>Gaziantep</option><option>Adana</option><option>Diğer</option></select></div>
+            <div class="form-group"><label class="form-label">İlçe<span class="required">*</span></label><input class="form-input" id="district" placeholder="İlçe" required></div>
+            <div class="form-group"><label class="form-label">Posta Kodu</label><input class="form-input" id="zip" placeholder="XXXXX"></div>
+            <div class="form-group"><label class="form-label">Ülke</label><select class="form-input" id="country"><option>Türkiye</option><option>Almanya</option><option>İngiltere</option><option>ABD</option><option>Diğer</option></select></div>
+            <div class="form-group full"><label class="form-label">Sipariş Notu</label><textarea class="form-input" id="note" placeholder="Özel bir isteminiz varsa buraya yazın..." style="height:80px;resize:none"></textarea></div>
+          </div>
+          <div class="form-nav"><div></div><button class="form-next-btn" data-next="2">Ödeme Yöntemine Geç<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Payment -->
+      <div class="form-section" id="step2">
+        <div class="form-section-header"><div class="form-section-icon payment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="form-section-title">Ödeme Yöntemi</div></div>
+        <div class="form-body">
+          <div class="payment-methods" id="payMethods">
+            <div class="pay-method active" data-method="card">
+              <div class="pay-method-radio"></div>
+              <div class="pay-method-icon">💳</div>
+              <div class="pay-method-text"><div class="pay-method-name">Kredi / Banka Kartı</div><div class="pay-method-desc">Visa, Mastercard, Amex</div></div>
+            </div>
+            <div class="pay-method" data-method="transfer">
+              <div class="pay-method-radio"></div>
+              <div class="pay-method-icon">🏦</div>
+              <div class="pay-method-text"><div class="pay-method-name">Havale / EFT</div><div class="pay-method-desc">Banka havalesi ile ödeme</div></div>
+            </div>
+          </div>
+
+          <!-- Card form -->
+          <div id="cardSection">
+            <div class="card-preview">
+              <div class="card-face">
+                <div class="card-brand">VISA</div>
+                <div class="card-chip"></div>
+                <div class="card-number" id="cardDisplayNum">•••• •••• •••• ••••</div>
+                <div class="card-bottom">
+                  <div><div class="card-holder-label">Kart Sahibi</div><div class="card-holder-value" id="cardDisplayName">AD SOYAD</div></div>
+                  <div><div class="card-expiry-label">Son Kullanma</div><div class="card-expiry-value" id="cardDisplayExpiry">MM/YY</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full"><label class="form-label">Kart Üzerindeki İsim<span class="required">*</span></label><input class="form-input" id="cardName" placeholder="AHMET YILMAZ"></div>
+              <div class="form-group full"><label class="form-label">Kart Numarası<span class="required">*</span></label><input class="form-input" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+              <div class="form-group"><label class="form-label">Son Kullanma<span class="required">*</span></label><input class="form-input" id="cardExpiry" placeholder="MM/YY" maxlength="5"></div>
+              <div class="form-group"><label class="form-label">CVV<span class="required">*</span></label><input class="form-input" id="cardCvv" placeholder="•••" maxlength="4" type="password"></div>
+            </div>
+          </div>
+
+          <!-- Bank transfer -->
+          <div id="transferSection" style="display:none">
+            <div class="bank-info">
+              <div class="bank-info-row"><span class="bank-info-label">Banka</span><span class="bank-info-value">Ziraat Bankası</span></div>
+              <div class="bank-info-row"><span class="bank-info-label">Şube</span><span class="bank-info-value">İstanbul / Merkez</span></div>
+              <div class="bank-info-row"><span class="bank-info-label">Hesap Sahibi</span><span class="bank-info-value">Entry Mark Halıcılık A.Ş.</span></div>
+              <div class="bank-info-row"><span class="bank-info-label">IBAN</span><span class="bank-info-value">TR00 0000 0000 0000 0000 0000 00<button class="copy-btn" onclick="navigator.clipboard.writeText('TR00000000000000000000000000');showToast('IBAN kopyalandı')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></span></div>
+            </div>
+          </div>
+
+          <div class="form-nav"><button class="form-back-btn" data-prev="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>Geri</button><button class="form-next-btn" data-next="3">Siparişi İncele<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Review -->
+      <div class="form-section" id="step3">
+        <div class="form-section-header"><div class="form-section-icon review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="form-section-title">Sipariş Onayı</div></div>
+        <div class="form-body">
+          <div class="review-items" id="reviewItems"></div>
+          <div class="review-address-card" id="reviewAddress">
+            <div class="review-address-label">Teslimat Adresi</div>
+            <div class="review-address-text" id="reviewAddressText"></div>
+          </div>
+          <div class="review-address-card" style="margin-top:10px" id="reviewPayment">
+            <div class="review-address-label">Ödeme Yöntemi</div>
+            <div class="review-address-text" id="reviewPaymentText"></div>
+          </div>
+          <div class="form-nav"><button class="form-back-btn" data-prev="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>Geri</button><button class="form-submit-btn" id="submitOrder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Siparişi Onayla</button></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-summary">
+      <div class="summary-header"><div class="summary-title">Sipariş Özeti</div></div>
+      <div class="summary-items" id="sidebarItems"></div>
+      <div class="summary-pricing">
+        <div class="summary-row"><span class="summary-row-label">Ara Toplam</span><span class="summary-row-value">8.603,00 TL</span></div>
+        <div class="summary-row"><span class="summary-row-label">Kargo</span><span class="summary-row-value free">Ücretsiz</span></div>
+        <div class="summary-row"><span class="summary-row-label">KDV (%10)</span><span class="summary-row-value">860,30 TL</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-total-row"><span class="summary-total-label">Toplam</span><span class="summary-total-value">9.463,30 TL</span></div>
+      </div>
+      <div class="summary-secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>SSL ile güvenli ödeme</div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-card">
+    <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h2 class="success-title">Siparişiniz Alındı!</h2>
+    <p class="success-text">Siparişiniz başarıyla oluşturuldu. Sipariş detaylarınız e-posta adresinize gönderilecektir.</p>
+    <div class="success-order-id" id="orderId">EM-2026-00847</div>
+    <p class="success-text" style="font-size:13px;">Tasarımcı ekibimiz üretim öncesi onayınız için size özel bir ön izleme sunacaktır.</p>
+    <br>
+    <a href="#" class="success-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Anasayfaya Dön</a>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span id="toastMsg"></span></div>
+
+<script>
+(()=>{
+  const cartData=[
+    {name:'Aegean Luxe — Ocean Blue',variant:'200×300cm · Yün',color:'#1B4F8A',price:4250,qty:1},
+    {name:'Urban Slate — Charcoal',variant:'160×230cm · Naylon',color:'#4a4a4a',price:1890,qty:2},
+    {name:'Custom Logo Mat',variant:'100×150cm · PP',color:'#1a1a1e',price:573,qty:1}
+  ];
+
+  let currentStep=1;
+  let payMethod='card';
+
+  // Build sidebar items
+  const sb=document.getElementById('sidebarItems');
+  cartData.forEach(it=>{
+    sb.innerHTML+=`<div class="summary-mini-item"><div class="summary-mini-img" style="background:${it.color};border-radius:7px"><div class="sm-tex"></div></div><div class="summary-mini-info"><div class="summary-mini-name">${it.name}</div><div class="summary-mini-meta">${it.qty}× · ${it.variant}</div></div><div class="summary-mini-price">${(it.price*it.qty).toLocaleString('tr-TR')} TL</div></div>`;
+  });
+
+  // Step navigation
+  function goToStep(n){
+    currentStep=n;
+    document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('step'+n).classList.add('active');
+    document.querySelectorAll('.step').forEach(s=>{
+      const sn=+s.dataset.step;
+      s.classList.remove('active','completed');
+      if(sn===n)s.classList.add('active');
+      if(sn<n)s.classList.add('completed');
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    if(n===3)buildReview();
+  }
+
+  document.querySelectorAll('.form-next-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const next=+btn.dataset.next;
+      if(currentStep===1&&!validateStep1())return;
+      if(currentStep===2&&payMethod==='card'&&!validateStep2())return;
+      goToStep(next);
+    });
+  });
+
+  document.querySelectorAll('.form-back-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>goToStep(+btn.dataset.prev));
+  });
+
+  document.querySelectorAll('.step').forEach(s=>{
+    s.addEventListener('click',()=>{
+      const sn=+s.dataset.step;
+      if(sn<currentStep)goToStep(sn);
+    });
+  });
+
+  // Validation
+  function validateStep1(){
+    const fields=['firstName','lastName','email','phone','address','city','district'];
+    let valid=true;
+    fields.forEach(f=>{
+      const el=document.getElementById(f);
+      if(!el.value.trim()){el.classList.add('error');valid=false;}
+      else el.classList.remove('error');
+    });
+    if(!valid)showToast('Lütfen zorunlu alanları doldurun');
+    return valid;
+  }
+
+  function validateStep2(){
+    const fields=['cardName','cardNumber','cardExpiry','cardCvv'];
+    let valid=true;
+    fields.forEach(f=>{
+      const el=document.getElementById(f);
+      if(!el.value.trim()){el.classList.add('error');valid=false;}
+      else el.classList.remove('error');
+    });
+    if(!valid)showToast('Lütfen kart bilgilerini doldurun');
+    return valid;
+  }
+
+  // Payment method toggle
+  document.querySelectorAll('.pay-method').forEach(m=>{
+    m.addEventListener('click',()=>{
+      document.querySelectorAll('.pay-method').forEach(p=>p.classList.remove('active'));
+      m.classList.add('active');
+      payMethod=m.dataset.method;
+      document.getElementById('cardSection').style.display=payMethod==='card'?'':'none';
+      document.getElementById('transferSection').style.display=payMethod==='transfer'?'':'none';
+    });
+  });
+
+  // Card live preview
+  document.getElementById('cardNumber').addEventListener('input',function(){
+    let v=this.value.replace(/\D/g,'').substring(0,16);
+    let formatted=v.replace(/(.{4})/g,'$1 ').trim();
+    this.value=formatted;
+    let display=formatted||'•••• •••• •••• ••••';
+    while(display.replace(/\s/g,'').length<16)display+='•';
+    document.getElementById('cardDisplayNum').textContent=display.replace(/(.{4})/g,'$1 ').trim().substring(0,19);
+    // Detect brand
+    const brand=document.querySelector('.card-brand');
+    if(v.startsWith('4'))brand.textContent='VISA';
+    else if(v.startsWith('5'))brand.textContent='MC';
+    else if(v.startsWith('3'))brand.textContent='AMEX';
+    else brand.textContent='CARD';
+  });
+
+  document.getElementById('cardName').addEventListener('input',function(){
+    document.getElementById('cardDisplayName').textContent=this.value.toUpperCase()||'AD SOYAD';
+  });
+
+  document.getElementById('cardExpiry').addEventListener('input',function(){
+    let v=this.value.replace(/\D/g,'').substring(0,4);
+    if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2);
+    this.value=v;
+    document.getElementById('cardDisplayExpiry').textContent=v||'MM/YY';
+  });
+
+  // Build review
+  function buildReview(){
+    const ri=document.getElementById('reviewItems');
+    ri.innerHTML='';
+    cartData.forEach(it=>{
+      ri.innerHTML+=`<div class="review-item"><div class="review-item-img" style="background:${it.color};border-radius:10px"><div class="ri-texture"></div><div class="ri-frame"></div></div><div class="review-item-info"><div class="review-item-name">${it.name}</div><div class="review-item-meta">${it.qty} adet · ${it.variant}</div></div><div class="review-item-price">${(it.price*it.qty).toLocaleString('tr-TR')} TL</div></div>`;
+    });
+
+    const fn=document.getElementById('firstName').value;
+    const ln=document.getElementById('lastName').value;
+    const addr=document.getElementById('address').value;
+    const city=document.getElementById('city').value;
+    const dist=document.getElementById('district').value;
+    const ph=document.getElementById('phone').value;
+    document.getElementById('reviewAddressText').innerHTML=`<strong>${fn} ${ln}</strong><br>${addr}<br>${dist} / ${city}<br>${ph}`;
+
+    if(payMethod==='card'){
+      const num=document.getElementById('cardNumber').value;
+      document.getElementById('reviewPaymentText').innerHTML=`Kredi Kartı · •••• ${num.slice(-4)}<br>${document.getElementById('cardName').value}`;
+    }else{
+      document.getElementById('reviewPaymentText').innerHTML='Havale / EFT · Ziraat Bankası';
+    }
+  }
+
+  // Submit
+  document.getElementById('submitOrder').addEventListener('click',()=>{
+    const id='EM-2026-'+String(Math.floor(Math.random()*90000+10000));
+    document.getElementById('orderId').textContent=id;
+    document.getElementById('successModal').classList.add('active');
+  });
+
+  // Remove error on focus
+  document.querySelectorAll('.form-input').forEach(inp=>{
+    inp.addEventListener('focus',()=>inp.classList.remove('error'));
+  });
+
+  // Toast
+  let tt;
+  function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3000);}
+  window.showToast=showToast;
+
+})();
+</script>
+</body>
+</html>

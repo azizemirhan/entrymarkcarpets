@@ -1,0 +1,454 @@
+/* =========================================
+   Eternal Content Editor — Admin Styles
+   ========================================= */
+
+/* Main wrapper */
+.ece-wrap {
+    max-width: 960px;
+    margin: 20px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Top bar with dropdown */
+.ece-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1d2327;
+    color: #fff;
+    padding: 18px 28px;
+    border-radius: 14px 14px 0 0;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ece-top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ece-main-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+}
+
+.ece-version {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.ece-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ece-page-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ece-page-label i {
+    font-size: 0.9rem;
+}
+
+.ece-page-select {
+    padding: 8px 36px 8px 14px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.ece-page-select:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.ece-page-select:focus {
+    outline: none;
+    border-color: #bb0d0e;
+    box-shadow: 0 0 0 3px rgba(187, 13, 14, 0.25);
+}
+
+.ece-page-select option {
+    background: #1d2327;
+    color: #fff;
+    padding: 8px;
+}
+
+/* Page header */
+.ece-page-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 28px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e2e4e7;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.ece-page-header i {
+    color: #bb0d0e;
+    font-size: 1.1rem;
+}
+
+/* Success message */
+.ece-success {
+    background: #e6f5ea;
+    color: #1a7431;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #b7e4c7;
+}
+
+/* Sticky Kaydet bar — Anasayfa formunda her zaman görünür */
+.ece-submit-bar--sticky {
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+    background: #f0f0f1;
+    padding: 12px 28px;
+    border-bottom: 1px solid #c3c4c7;
+    margin: 0 -28px 20px -28px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.ece-submit-bar--sticky .button-hero {
+    font-size: 1rem;
+    padding: 8px 20px;
+    height: auto;
+    line-height: 1.4;
+}
+
+.ece-submit-bar--sticky .button-hero i {
+    margin-right: 6px;
+}
+
+/* Tabs */
+.ece-tabs {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border-bottom: 2px solid #e2e4e7;
+    padding: 0 20px;
+    overflow-x: auto;
+}
+
+.ece-tab {
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #646970;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.ece-tab:hover {
+    color: #1d2327;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.ece-tab--active {
+    color: #bb0d0e;
+    border-bottom-color: #bb0d0e;
+}
+
+/* Tab content */
+.ece-tab-content {
+    display: none;
+    padding: 24px 28px;
+    background: #f0f0f1;
+}
+
+.ece-tab-content--active {
+    display: block;
+}
+
+/* Cards */
+.ece-card {
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.ece-card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1d2327;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+/* Fields */
+.ece-field {
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.ece-field:last-child {
+    margin-bottom: 0;
+}
+
+.ece-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #646970;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ece-field input[type="text"],
+.ece-field input[type="url"],
+.ece-field input[type="tel"],
+.ece-field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #dcdcde;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.ece-field input:focus,
+.ece-field textarea:focus {
+    outline: none;
+    border-color: #bb0d0e;
+    box-shadow: 0 0 0 2px rgba(187, 13, 14, 0.12);
+}
+
+/* Row layout */
+.ece-row {
+    display: flex;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .ece-row {
+        flex-direction: column;
+    }
+}
+
+/* Repeater items */
+.ece-repeater-item {
+    position: relative;
+    padding: 16px 70px 16px 48px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.ece-image-preview img {
+    max-width: 160px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.ece-repeater-num {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    background: #bb0d0e;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* Save bar */
+.ece-save-bar {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding: 16px 28px;
+    border-top: 2px solid #e2e4e7;
+    display: flex;
+    justify-content: flex-end;
+    border-radius: 0 0 14px 14px;
+    z-index: 100;
+}
+
+.ece-save-btn {
+    padding: 12px 32px;
+    background: #bb0d0e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.ece-save-btn:hover {
+    background: #a00b0c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(187, 13, 14, 0.3);
+}
+
+/* Image Upload */
+.ece-field-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.ece-upload-btn {
+    padding: 10px 15px;
+    background: #E63946;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ece-upload-btn:hover {
+    background: #c92a35;
+    transform: translateY(-2px);
+}
+
+.ece-image-preview {
+    margin-top: 10px;
+    max-width: 300px;
+}
+
+.ece-image-preview img {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid #eee;
+}
+
+/* Fix admin menu icon size */
+.toplevel_page_eternal-content .wp-menu-image img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    padding: 0;
+}
+
+/* Fix top bar logo size */
+.ece-top-bar-left img {
+    height: 50px !important;
+    width: auto;
+}
+
+/* Repeater container */
+.ece-repeater-container {
+    margin-bottom: 8px;
+}
+
+/* Add repeater button */
+.ece-add-repeater {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 8px;
+    background: #f0faf0;
+    color: #1a7431;
+    border: 2px dashed #b7e4c7;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ece-add-repeater:hover {
+    background: #d4edda;
+    border-color: #1a7431;
+    transform: translateY(-1px);
+}
+
+/* Remove repeater button */
+.ece-remove-repeater {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    background: #fff0f0;
+    color: #bb0d0e;
+    border: 1px solid #fcc;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    z-index: 2;
+    line-height: 1;
+}
+
+.ece-remove-repeater:hover {
+    background: #bb0d0e;
+    color: #fff;
+    border-color: #bb0d0e;
+    transform: scale(1.05);
+}

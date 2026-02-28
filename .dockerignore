@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Ortam (gizli bilgiler image'a girmesin)
+.env
+.env.*
+!.env.example
+
+# wp-config yerel sürümü (Docker entrypoint oluşturacak)
+wp-config.php
+
+# Gereksiz / büyük dizinler
+node_modules
+*.log
+.DS_Store
+Thumbs.db
+*.md
+!README.md

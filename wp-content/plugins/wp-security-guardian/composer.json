@@ -1,0 +1,15 @@
+{
+    "name": "wp-security-guardian/security-guardian",
+    "description": "WordPress Security Plugin - Malware Scanner, WAF, 2FA",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4",
+        "pragmarx/google2fa": "^8.0",
+        "bacon/bacon-qr-code": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WPSG\\": "src/"
+        }
+    }
+}

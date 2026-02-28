@@ -1,0 +1,44 @@
+services:
+  wordpress:
+    build: .
+    ports:
+      - "9080:80"
+    environment:
+      DB_NAME: ${DB_NAME:-wordpress}
+      DB_USER: ${DB_USER:-wordpress}
+      DB_PASSWORD: ${DB_PASSWORD:-wordpress}
+      DB_HOST: db
+      WP_URL: ${WP_URL:-http://localhost:9080}
+      WP_DEBUG: ${WP_DEBUG:-false}
+    volumes:
+      # Yüklenen medya kalıcı olsun
+      - wp-content-uploads:/var/www/html/wp-content/uploads
+      # Yerel tema (nextcore) container'da görünsün - header/footer değişiklikleri için
+      - ./wp-content/themes/nextcore:/var/www/html/wp-content/themes/nextcore
+      # Yerel eklentiler (Entry Mark Paspas vb.) container'da görünsün
+      - ./wp-content/plugins:/var/www/html/wp-content/plugins
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-wordpress}
+      MYSQL_USER: ${DB_USER:-wordpress}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-wordpress}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "sh", "-c", "mysqladmin ping -h localhost -u root -p\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  wp-content-uploads:

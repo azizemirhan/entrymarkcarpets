@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Mark — Sepetim</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#2D3748;--navy:#215387;--gold:#f5a524;--light:#F7F8F8;--gold-muted:#DDA944;--cream:#FAF8F5;--dark-90:rgba(45,55,72,.9);--dark-70:rgba(45,55,72,.7);--dark-50:rgba(45,55,72,.5);--dark-30:rgba(45,55,72,.3);--dark-10:rgba(45,55,72,.1);--dark-05:rgba(45,55,72,.05);--navy-08:rgba(33,83,135,.08);--gold-12:rgba(245,165,36,.12);--gold-06:rgba(245,165,36,.06);--red:#E53E3E;--green:#22a867;--radius:16px;--radius-sm:10px;--shadow-sm:0 2px 8px rgba(45,55,72,.05);--shadow-md:0 8px 30px rgba(45,55,72,.08);--transition:cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--cream);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{border:none;background:none;cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+a{text-decoration:none;color:inherit}
+
+/* ═══ PAGE WRAPPER ═══ */
+.cart-page{max-width:1360px;margin:0 auto;padding:48px 60px 80px}
+
+/* ═══ BREADCRUMB ═══ */
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--dark-30)}
+.breadcrumb a{color:var(--dark-50);transition:color .3s}
+.breadcrumb a:hover{color:var(--navy)}
+.breadcrumb svg{width:12px;height:12px;opacity:.4}
+
+/* ═══ PAGE HEADER ═══ */
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--dark-10)}
+.page-title{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:var(--dark)}
+.page-title .cart-count-inline{font-size:18px;font-weight:400;color:var(--dark-30);margin-left:8px}
+.page-header-right{display:flex;align-items:center;gap:16px}
+.continue-shopping{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;color:var(--dark-50);transition:color .3s}
+.continue-shopping:hover{color:var(--navy)}
+.continue-shopping svg{width:16px;height:16px}
+.clear-cart-btn{font-size:13px;color:var(--dark-30);transition:color .3s;display:flex;align-items:center;gap:5px}
+.clear-cart-btn:hover{color:var(--red)}
+.clear-cart-btn svg{width:14px;height:14px}
+
+/* ═══ LAYOUT ═══ */
+.cart-layout{display:grid;grid-template-columns:1fr 400px;gap:36px;align-items:start}
+
+/* ═══ CART ITEMS ═══ */
+.cart-items{display:flex;flex-direction:column;gap:0}
+
+/* Column headers */
+.cart-col-header{display:grid;grid-template-columns:1fr 140px 140px 100px 44px;gap:16px;align-items:center;padding:0 0 14px;margin-bottom:4px;border-bottom:1px solid var(--dark-10);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--dark-30)}
+.cart-col-header .col-right{text-align:right}
+
+/* Cart item card */
+.cart-item{display:grid;grid-template-columns:1fr 140px 140px 100px 44px;gap:16px;align-items:center;padding:24px 0;border-bottom:1px solid var(--dark-05);transition:all .3s var(--transition);position:relative}
+.cart-item:hover{background:rgba(255,255,255,.6);margin:0 -16px;padding:24px 16px;border-radius:var(--radius)}
+
+/* Product info */
+.cart-product{display:flex;gap:18px;align-items:center}
+.cart-product-img{width:100px;height:80px;border-radius:12px;overflow:hidden;position:relative;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.cart-product-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+.cart-product-img-inner .cp-texture{position:absolute;inset:0;opacity:.07;background-image:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(255,255,255,.12) 5px,rgba(255,255,255,.12) 6px),repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(255,255,255,.12) 5px,rgba(255,255,255,.12) 6px)}
+.cart-product-img-inner .cp-frame{position:absolute;inset:5px;border:1px solid rgba(255,255,255,.1);border-radius:8px}
+.cart-product-img-inner svg{width:20px;height:20px;fill:none;stroke:rgba(255,255,255,.3);stroke-width:1.2;position:relative;z-index:1}
+
+.cart-product-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cart-product-name{font-size:15px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-product-variant{font-size:12.5px;color:var(--dark-50)}
+.cart-product-tags{display:flex;gap:6px;margin-top:4px}
+.cart-product-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:5px;background:var(--navy-08);color:var(--navy)}
+.cart-product-tag.custom{background:var(--gold-06);color:var(--gold-muted)}
+
+/* Unit price */
+.cart-unit-price{font-size:14px;color:var(--dark-50);text-align:center}
+
+/* Quantity */
+.cart-qty{display:flex;align-items:center;justify-content:center}
+.qty-control{display:flex;align-items:center;border:1.5px solid var(--dark-10);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+.qty-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--dark-50);transition:all .2s}
+.qty-btn:hover{background:var(--dark-05);color:var(--dark)}
+.qty-btn.disabled{opacity:.3;pointer-events:none}
+.qty-value{width:44px;text-align:center;font-size:14px;font-weight:600;color:var(--dark);border-left:1px solid var(--dark-05);border-right:1px solid var(--dark-05)}
+
+/* Subtotal */
+.cart-subtotal{font-size:15px;font-weight:700;color:var(--dark);text-align:right}
+
+/* Remove */
+.cart-remove{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--dark-30);transition:all .3s;justify-self:center}
+.cart-remove:hover{background:rgba(229,62,62,.06);color:var(--red)}
+.cart-remove svg{width:16px;height:16px}
+
+/* Remove animation */
+.cart-item.removing{opacity:0;transform:translateX(40px);max-height:0;padding:0;margin:0;overflow:hidden;border:none;transition:all .4s var(--transition)}
+
+/* ═══ COUPON ═══ */
+.coupon-section{margin-top:28px;padding:24px 28px;background:#fff;border-radius:var(--radius);border:1px solid var(--dark-05)}
+.coupon-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.coupon-title svg{width:18px;height:18px;color:var(--gold)}
+.coupon-row{display:flex;gap:10px}
+.coupon-input{flex:1;padding:12px 16px;border:1.5px solid var(--dark-10);border-radius:var(--radius-sm);font-size:14px;color:var(--dark);outline:none;transition:border-color .3s;background:var(--light)}
+.coupon-input:focus{border-color:var(--navy)}
+.coupon-input::placeholder{color:var(--dark-30)}
+.coupon-apply{padding:12px 24px;background:var(--dark);color:#fff;font-size:13px;font-weight:600;border-radius:var(--radius-sm);transition:all .3s;letter-spacing:.3px}
+.coupon-apply:hover{background:var(--navy);box-shadow:var(--shadow-md)}
+.coupon-msg{margin-top:10px;font-size:12.5px;display:none;align-items:center;gap:6px}
+.coupon-msg svg{width:14px;height:14px;flex-shrink:0}
+.coupon-msg.success{color:var(--green);display:flex}
+.coupon-msg.error{color:var(--red);display:flex}
+
+/* ═══ TRUST STRIP ═══ */
+.trust-strip{margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.trust-item{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border-radius:var(--radius-sm);border:1px solid var(--dark-05)}
+.trust-item-icon{width:36px;height:36px;border-radius:10px;background:var(--gold-06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trust-item-icon svg{width:18px;height:18px;color:var(--gold-muted);stroke-width:1.8}
+.trust-item-text{font-size:12px;color:var(--dark-50);line-height:1.4}
+.trust-item-text strong{display:block;color:var(--dark);font-weight:600;font-size:12.5px}
+
+/* ═══ ORDER SUMMARY SIDEBAR ═══ */
+.order-summary{background:#fff;border-radius:20px;border:1px solid var(--dark-05);overflow:hidden;position:sticky;top:30px}
+
+.summary-header{padding:28px 28px 20px;border-bottom:1px solid var(--dark-05)}
+.summary-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark)}
+.summary-item-count{font-size:13px;color:var(--dark-30);margin-top:2px}
+
+.summary-items{padding:20px 28px;border-bottom:1px solid var(--dark-05);max-height:240px;overflow-y:auto}
+.summary-mini-item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--dark-05)}
+.summary-mini-item:last-child{border-bottom:none}
+.summary-mini-img{width:48px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden}
+.summary-mini-img .cp-texture,.summary-mini-img .cp-frame{position:absolute}
+.summary-mini-img .cp-texture{inset:0;opacity:.07;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.12) 3px,rgba(255,255,255,.12) 4px)}
+.summary-mini-img .cp-frame{inset:3px;border:1px solid rgba(255,255,255,.1);border-radius:5px}
+.summary-mini-info{flex:1;min-width:0}
+.summary-mini-name{font-size:12.5px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.summary-mini-meta{font-size:11px;color:var(--dark-30)}
+.summary-mini-price{font-size:13px;font-weight:700;color:var(--dark);flex-shrink:0}
+
+/* Pricing rows */
+.summary-pricing{padding:20px 28px;display:flex;flex-direction:column;gap:12px}
+.summary-row{display:flex;justify-content:space-between;align-items:center}
+.summary-row-label{font-size:14px;color:var(--dark-50)}
+.summary-row-value{font-size:14px;font-weight:600;color:var(--dark)}
+.summary-row-value.free{color:var(--green)}
+.summary-row-value.discount{color:var(--red)}
+.summary-row.shipping .summary-row-label{display:flex;align-items:center;gap:6px}
+.summary-row.shipping .summary-row-label svg{width:14px;height:14px;color:var(--green)}
+
+.summary-divider{height:1px;background:var(--dark-10);margin:4px 0}
+
+.summary-total-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.summary-total-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--dark)}
+.summary-total-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold)}
+
+/* Checkout CTA */
+.summary-cta{padding:0 28px 28px}
+.checkout-btn{width:100%;padding:17px;background:linear-gradient(135deg,var(--gold),var(--gold-muted));color:var(--dark);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.checkout-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.checkout-btn:hover::before{left:100%}
+.checkout-btn:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(245,165,36,.35)}
+.checkout-btn svg{width:20px;height:20px;transition:transform .3s}
+.checkout-btn:hover svg{transform:translateX(4px)}
+
+.summary-secure{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;font-size:11.5px;color:var(--dark-30)}
+.summary-secure svg{width:13px;height:13px;color:var(--green)}
+
+.summary-payments{display:flex;justify-content:center;gap:8px;margin-top:14px}
+.pay-icon{width:42px;height:26px;border:1px solid var(--dark-10);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--dark-30)}
+
+/* ═══ EMPTY CART ═══ */
+.empty-cart{text-align:center;padding:80px 40px;display:none}
+.empty-cart.visible{display:block}
+.empty-cart-icon{width:80px;height:80px;border-radius:20px;background:var(--dark-05);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.empty-cart-icon svg{width:36px;height:36px;color:var(--dark-30);stroke-width:1.5}
+.empty-cart h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--dark);margin-bottom:8px}
+.empty-cart p{font-size:15px;color:var(--dark-50);margin-bottom:24px}
+.empty-cart-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:linear-gradient(135deg,var(--dark),var(--navy));color:#fff;font-size:14px;font-weight:600;border-radius:12px;transition:all .4s}
+.empty-cart-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.empty-cart-btn svg{width:16px;height:16px}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:0 20px 50px rgba(45,55,72,.2);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast svg{width:18px;height:18px;color:var(--gold);flex-shrink:0}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){.cart-layout{grid-template-columns:1fr 360px;gap:28px}.cart-page{padding:36px 30px 60px}}
+@media(max-width:900px){.cart-layout{grid-template-columns:1fr}.order-summary{position:static}.cart-col-header{display:none}.cart-item{grid-template-columns:1fr auto auto;gap:12px}.cart-unit-price{display:none}.trust-strip{grid-template-columns:1fr}}
+@media(max-width:600px){.cart-page{padding:24px 16px 50px}.cart-item{grid-template-columns:1fr;gap:14px}.cart-product-img{width:80px;height:64px}.cart-item-bottom-row{display:flex;align-items:center;justify-content:space-between;gap:12px;grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<div class="cart-page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Anasayfa</a>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span style="color:var(--dark)">Sepetim</span>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Sepetim<span class="cart-count-inline" id="headerCount">(3 ürün)</span></h1>
+    <div class="page-header-right">
+      <a href="#" class="continue-shopping">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+        Alışverişe Devam Et
+      </a>
+      <button class="clear-cart-btn" id="clearCartBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Sepeti Temizle
+      </button>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="cart-layout" id="cartLayout">
+
+    <!-- LEFT: Cart Items -->
+    <div>
+      <!-- Column header -->
+      <div class="cart-col-header">
+        <span>Ürün</span>
+        <span style="text-align:center">Birim Fiyat</span>
+        <span style="text-align:center">Adet</span>
+        <span class="col-right">Ara Toplam</span>
+        <span></span>
+      </div>
+
+      <div class="cart-items" id="cartItems"></div>
+
+      <!-- Coupon -->
+      <div class="coupon-section" id="couponSection">
+        <div class="coupon-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          İndirim Kuponu
+        </div>
+        <div class="coupon-row">
+          <input class="coupon-input" id="couponInput" type="text" placeholder="Kupon kodunuzu girin...">
+          <button class="coupon-apply" id="couponApply">Uygula</button>
+        </div>
+        <div class="coupon-msg" id="couponMsg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span id="couponMsgText"></span></div>
+      </div>
+
+      <!-- Trust -->
+      <div class="trust-strip">
+        <div class="trust-item">
+          <div class="trust-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="trust-item-text"><strong>Güvenli Ödeme</strong>256-bit SSL şifreleme</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div class="trust-item-text"><strong>Ücretsiz Kargo</strong>500 TL üzeri siparişlerde</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+          <div class="trust-item-text"><strong>Kolay İade</strong>14 gün içinde ücretsiz</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <div class="order-summary" id="orderSummary">
+      <div class="summary-header">
+        <div class="summary-title">Sipariş Özeti</div>
+        <div class="summary-item-count" id="summaryCount">3 ürün</div>
+      </div>
+      <div class="summary-items" id="summaryItems"></div>
+      <div class="summary-pricing">
+        <div class="summary-row"><span class="summary-row-label">Ara Toplam</span><span class="summary-row-value" id="sumSubtotal">0 TL</span></div>
+        <div class="summary-row shipping"><span class="summary-row-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Kargo</span><span class="summary-row-value free" id="sumShipping">Ücretsiz</span></div>
+        <div class="summary-row" id="discountRow" style="display:none"><span class="summary-row-label">İndirim</span><span class="summary-row-value discount" id="sumDiscount">-0 TL</span></div>
+        <div class="summary-row"><span class="summary-row-label">KDV (%10)</span><span class="summary-row-value" id="sumTax">0 TL</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-total-row"><span class="summary-total-label">Toplam</span><span class="summary-total-value" id="sumTotal">0 TL</span></div>
+      </div>
+      <div class="summary-cta">
+        <a href="checkout.html" class="checkout-btn" id="checkoutBtn">
+          Ödemeye Geç
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </a>
+        <div class="summary-secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Güvenli ödeme ile korunuyorsunuz</div>
+        <div class="summary-payments">
+          <div class="pay-icon">VISA</div>
+          <div class="pay-icon">MC</div>
+          <div class="pay-icon">AMEX</div>
+          <div class="pay-icon">PP</div>
+          <div class="pay-icon">IBAN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-cart" id="emptyCart">
+    <div class="empty-cart-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+    <h3>Sepetiniz Boş</h3>
+    <p>Henüz sepetinize ürün eklemediniz. Koleksiyonlarımızı keşfedin!</p>
+    <a href="#" class="empty-cart-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7-7 7 7 7"/></svg>Alışverişe Başla</a>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span id="toastMsg"></span></div>
+
+<script>
+(()=>{
+  let cart=[
+    {id:1,name:'Aegean Luxe — Ocean Blue',variant:'200×300cm · Yün Karışım',color:'#1B4F8A',price:4250,qty:1,tag:'Otel',tagType:''},
+    {id:2,name:'Urban Slate — Charcoal',variant:'160×230cm · Naylon',color:'#4a4a4a',price:1890,qty:2,tag:'Ofis',tagType:''},
+    {id:3,name:'Custom Logo Mat',variant:'100×150cm · Polipropilen',color:'#1a1a1e',price:573,qty:1,tag:'Özel',tagType:'custom'}
+  ];
+  let discount=0;
+
+  const fmt=n=>n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2})+' TL';
+
+  function render(){
+    const container=document.getElementById('cartItems');
+    const summaryItems=document.getElementById('summaryItems');
+    container.innerHTML='';
+    summaryItems.innerHTML='';
+
+    if(!cart.length){
+      document.getElementById('cartLayout').style.display='none';
+      document.getElementById('emptyCart').classList.add('visible');
+      return;
+    }
+
+    document.getElementById('cartLayout').style.display='';
+    document.getElementById('emptyCart').classList.remove('visible');
+
+    cart.forEach(item=>{
+      // Main cart item
+      const el=document.createElement('div');
+      el.className='cart-item';
+      el.dataset.id=item.id;
+      el.innerHTML=`
+        <div class="cart-product">
+          <div class="cart-product-img">
+            <div class="cart-product-img-inner" style="background:${item.color};">
+              <div class="cp-texture"></div>
+              <div class="cp-frame"></div>
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+          </div>
+          <div class="cart-product-info">
+            <div class="cart-product-name">${item.name}</div>
+            <div class="cart-product-variant">${item.variant}</div>
+            <div class="cart-product-tags"><span class="cart-product-tag ${item.tagType}">${item.tag}</span></div>
+          </div>
+        </div>
+        <div class="cart-unit-price">${fmt(item.price)}</div>
+        <div class="cart-qty">
+          <div class="qty-control">
+            <button class="qty-btn ${item.qty<=1?'disabled':''}" data-action="dec" data-id="${item.id}">−</button>
+            <span class="qty-value">${item.qty}</span>
+            <button class="qty-btn" data-action="inc" data-id="${item.id}">+</button>
+          </div>
+        </div>
+        <div class="cart-subtotal">${fmt(item.price*item.qty)}</div>
+        <button class="cart-remove" data-id="${item.id}" title="Kaldır"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+      `;
+      container.appendChild(el);
+
+      // Summary mini item
+      const mini=document.createElement('div');
+      mini.className='summary-mini-item';
+      mini.innerHTML=`
+        <div class="summary-mini-img" style="background:${item.color};border-radius:8px;"><div class="cp-texture"></div><div class="cp-frame"></div></div>
+        <div class="summary-mini-info"><div class="summary-mini-name">${item.name}</div><div class="summary-mini-meta">${item.qty} adet</div></div>
+        <div class="summary-mini-price">${fmt(item.price*item.qty)}</div>
+      `;
+      summaryItems.appendChild(mini);
+    });
+
+    // Events
+    container.querySelectorAll('.qty-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const id=+btn.dataset.id;
+        const action=btn.dataset.action;
+        const item=cart.find(i=>i.id===id);
+        if(action==='inc')item.qty++;
+        if(action==='dec'&&item.qty>1)item.qty--;
+        render();
+      });
+    });
+
+    container.querySelectorAll('.cart-remove').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const id=+btn.dataset.id;
+        const el=btn.closest('.cart-item');
+        el.classList.add('removing');
+        setTimeout(()=>{cart=cart.filter(i=>i.id!==id);render();showToast('Ürün sepetten kaldırıldı');},400);
+      });
+    });
+
+    updateTotals();
+  }
+
+  function updateTotals(){
+    const totalItems=cart.reduce((s,i)=>s+i.qty,0);
+    const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const shipping=subtotal>=500?0:49.90;
+    const discountAmt=subtotal*discount;
+    const taxable=subtotal-discountAmt;
+    const tax=taxable*0.10;
+    const total=taxable+tax+shipping;
+
+    document.getElementById('headerCount').textContent=`(${totalItems} ürün)`;
+    document.getElementById('summaryCount').textContent=`${totalItems} ürün`;
+    document.getElementById('sumSubtotal').textContent=fmt(subtotal);
+    document.getElementById('sumShipping').textContent=shipping===0?'Ücretsiz':fmt(shipping);
+    document.getElementById('sumShipping').className='summary-row-value'+(shipping===0?' free':'');
+    document.getElementById('sumTax').textContent=fmt(tax);
+    document.getElementById('sumTotal').textContent=fmt(total);
+
+    const dr=document.getElementById('discountRow');
+    if(discount>0){dr.style.display='';document.getElementById('sumDiscount').textContent='-'+fmt(discountAmt);}
+    else dr.style.display='none';
+  }
+
+  // Coupon
+  document.getElementById('couponApply').addEventListener('click',()=>{
+    const code=document.getElementById('couponInput').value.trim().toUpperCase();
+    const msg=document.getElementById('couponMsg');
+    const msgText=document.getElementById('couponMsgText');
+    if(code==='ENTRYMARK10'){
+      discount=0.10;msg.className='coupon-msg success';msgText.textContent='%10 indirim uygulandı!';showToast('%10 indirim kuponu uygulandı!');
+    }else if(code==='WELCOME20'){
+      discount=0.20;msg.className='coupon-msg success';msgText.textContent='%20 hoş geldin indirimi uygulandı!';showToast('%20 indirim kuponu uygulandı!');
+    }else{
+      discount=0;msg.className='coupon-msg error';
+      msg.querySelector('svg').innerHTML='<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+      msgText.textContent='Geçersiz kupon kodu';
+    }
+    render();
+  });
+
+  // Clear cart
+  document.getElementById('clearCartBtn').addEventListener('click',()=>{cart=[];render();showToast('Sepet temizlendi');});
+
+  // Toast
+  let tt;
+  function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
+  render();
+})();
+</script>
+</body>
+</html>

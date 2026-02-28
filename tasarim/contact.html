@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entry Mark — İletişim</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Outfit:wght@200;300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#2D3748;--navy:#215387;--gold:#f5a524;--light:#F7F8F8;--gold-muted:#DDA944;--cream:#FAF8F5;--dark-90:rgba(45,55,72,.9);--dark-70:rgba(45,55,72,.7);--dark-50:rgba(45,55,72,.5);--dark-30:rgba(45,55,72,.3);--dark-10:rgba(45,55,72,.1);--dark-05:rgba(45,55,72,.05);--navy-08:rgba(33,83,135,.08);--gold-12:rgba(245,165,36,.12);--gold-06:rgba(245,165,36,.06);--green:#22a867;--red:#E53E3E;--radius:16px;--radius-sm:10px;--shadow-sm:0 2px 8px rgba(45,55,72,.05);--shadow-md:0 8px 30px rgba(45,55,72,.08);--shadow-lg:0 20px 50px rgba(45,55,72,.12);--transition:cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;color:var(--dark);background:var(--cream);-webkit-font-smoothing:antialiased}
+button{border:none;background:none;cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+a{text-decoration:none;color:inherit}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--transition),transform .7s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══════════════════════════════════
+   HERO
+   ═══════════════════════════════════ */
+.contact-hero{position:relative;padding:100px 60px 80px;text-align:center;overflow:hidden;background:linear-gradient(135deg,var(--dark) 0%,#1a2538 50%,var(--navy) 100%)}
+.contact-hero::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.008) 40px,rgba(255,255,255,.008) 41px),repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.008) 40px,rgba(255,255,255,.008) 41px)}
+.hero-glow1{position:absolute;top:-100px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(245,165,36,.06),transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-120px;left:-80px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(33,83,135,.1),transparent 70%);pointer-events:none}
+.contact-hero-content{position:relative;z-index:2;max-width:680px;margin:0 auto}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:22px}
+.hero-eyebrow span:first-child,.hero-eyebrow span:last-child{width:30px;height:1.5px;background:var(--gold)}
+.hero-eyebrow-text{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:5px;color:var(--gold)}
+.contact-hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,4.5vw,58px);font-weight:700;color:#fff;line-height:1.1;margin-bottom:18px;opacity:0;animation:fadeUp .9s .3s ease forwards}
+.contact-hero h1 em{font-style:italic;color:var(--gold);position:relative}
+.contact-hero h1 em::after{content:'';position:absolute;bottom:3px;left:0;width:100%;height:7px;background:rgba(245,165,36,.1);border-radius:4px;z-index:-1}
+.contact-hero-desc{font-size:17px;color:rgba(255,255,255,.45);line-height:1.75;font-weight:300;opacity:0;animation:fadeUp .9s .5s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════
+   CONTACT CARDS ROW
+   ═══════════════════════════════════ */
+.contact-cards{max-width:1360px;margin:-50px auto 0;padding:0 60px;position:relative;z-index:10;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.c-card{background:#fff;border-radius:18px;border:1px solid var(--dark-05);padding:30px 24px;text-align:center;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.c-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
+.c-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-muted));transform:scaleX(0);transition:transform .5s var(--transition)}
+.c-card:hover::before{transform:scaleX(1)}
+.c-card-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;transition:transform .3s}
+.c-card:hover .c-card-icon{transform:scale(1.08)}
+.c-card-icon svg{width:26px;height:26px;stroke-width:1.6}
+.c-card:nth-child(1) .c-card-icon{background:var(--navy-08)}
+.c-card:nth-child(1) .c-card-icon svg{color:var(--navy)}
+.c-card:nth-child(2) .c-card-icon{background:var(--gold-06)}
+.c-card:nth-child(2) .c-card-icon svg{color:var(--gold)}
+.c-card:nth-child(3) .c-card-icon{background:rgba(34,168,103,.07)}
+.c-card:nth-child(3) .c-card-icon svg{color:var(--green)}
+.c-card:nth-child(4) .c-card-icon{background:rgba(45,55,72,.06)}
+.c-card:nth-child(4) .c-card-icon svg{color:var(--dark)}
+.c-card-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.c-card-value{font-size:14px;color:var(--dark-50);line-height:1.6}
+.c-card-value a{color:var(--navy);font-weight:500;transition:color .3s}
+.c-card-value a:hover{color:var(--gold)}
+
+/* ═══════════════════════════════════
+   MAIN SECTION — FORM + MAP
+   ═══════════════════════════════════ */
+.contact-main{max-width:1360px;margin:0 auto;padding:80px 60px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+
+/* FORM */
+.contact-form-wrap{background:#fff;border-radius:24px;border:1px solid var(--dark-05);overflow:hidden}
+.form-header{padding:32px 36px 0;display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.form-header-icon{width:44px;height:44px;border-radius:12px;background:var(--gold-06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.form-header-icon svg{width:22px;height:22px;color:var(--gold);stroke-width:1.8}
+.form-header-text h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--dark)}
+.form-header-text p{font-size:13px;color:var(--dark-30)}
+.form-body{padding:28px 36px 36px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-grid .full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--dark-50)}
+.form-label .req{color:var(--red);margin-left:2px}
+.form-input{padding:13px 16px;border:1.5px solid var(--dark-10);border-radius:var(--radius-sm);font-size:14.5px;color:var(--dark);outline:none;transition:all .3s;background:var(--light)}
+.form-input:focus{border-color:var(--navy);background:#fff;box-shadow:0 0 0 3px rgba(33,83,135,.06)}
+.form-input::placeholder{color:var(--dark-30)}
+.form-input.error{border-color:var(--red)}
+select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232D3748' stroke-width='2.5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+textarea.form-input{height:130px;resize:none}
+
+.form-checkbox{display:flex;align-items:flex-start;gap:10px;margin-top:4px}
+.form-checkbox input{width:18px;height:18px;border-radius:4px;accent-color:var(--navy);margin-top:2px;flex-shrink:0}
+.form-checkbox label{font-size:13px;color:var(--dark-50);line-height:1.5}
+.form-checkbox label a{color:var(--navy);font-weight:500;text-decoration:underline}
+
+.form-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold-muted));color:var(--dark);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;border-radius:14px;margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.form-submit::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.form-submit:hover::before{left:100%}
+.form-submit:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(245,165,36,.35)}
+.form-submit svg{width:18px;height:18px;transition:transform .3s}
+.form-submit:hover svg{transform:translateX(4px)}
+
+/* MAP + OFFICE */
+.contact-right{display:flex;flex-direction:column;gap:20px}
+
+.map-wrap{border-radius:20px;overflow:hidden;border:1px solid var(--dark-05);height:320px;position:relative;background:linear-gradient(135deg,#e8edf2,#dde4ec);display:flex;align-items:center;justify-content:center}
+.map-placeholder{text-align:center;position:relative;z-index:1}
+.map-placeholder-icon{width:60px;height:60px;border-radius:50%;background:rgba(33,83,135,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.map-placeholder-icon svg{width:28px;height:28px;color:var(--navy);stroke-width:1.5}
+.map-placeholder-text{font-size:14px;font-weight:600;color:var(--dark)}
+.map-placeholder-sub{font-size:12px;color:var(--dark-30);margin-top:4px}
+.map-pin-dots{position:absolute;inset:0;pointer-events:none}
+.map-pin-dots span{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--navy);opacity:.1}
+.map-pin-dots span:nth-child(1){top:25%;left:30%}
+.map-pin-dots span:nth-child(2){top:45%;left:60%;opacity:.15}
+.map-pin-dots span:nth-child(3){top:65%;left:40%;opacity:.08}
+.map-pin-dots span:nth-child(4){top:35%;left:75%;opacity:.12}
+.map-pin-dots span:nth-child(5){top:70%;left:70%;opacity:.06}
+/* Grid pattern on map */
+.map-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--dark-05) 1px,transparent 1px),linear-gradient(90deg,var(--dark-05) 1px,transparent 1px);background-size:30px 30px;opacity:.5}
+
+/* Office card */
+.office-card{background:#fff;border-radius:20px;border:1px solid var(--dark-05);padding:28px;transition:all .4s var(--transition)}
+.office-card:hover{box-shadow:var(--shadow-md);border-color:transparent}
+.office-card-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.office-card-icon{width:44px;height:44px;border-radius:12px;background:var(--navy-08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.office-card-icon svg{width:22px;height:22px;color:var(--navy);stroke-width:1.8}
+.office-card-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark)}
+.office-card-type{font-size:12px;color:var(--dark-30)}
+
+.office-info{display:flex;flex-direction:column;gap:14px}
+.office-row{display:flex;align-items:flex-start;gap:12px}
+.office-row-icon{width:32px;height:32px;border-radius:8px;background:var(--dark-05);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.office-row-icon svg{width:15px;height:15px;color:var(--dark-50);stroke-width:1.8}
+.office-row-text{font-size:13.5px;color:var(--dark-70);line-height:1.55}
+.office-row-text strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--dark-30);margin-bottom:2px;font-weight:600}
+
+.office-hours{margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-05)}
+.office-hours-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-muted);margin-bottom:10px}
+.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hours-item{display:flex;justify-content:space-between;padding:8px 12px;background:var(--dark-05);border-radius:8px;font-size:12.5px}
+.hours-item .day{color:var(--dark-50);font-weight:500}
+.hours-item .time{color:var(--dark);font-weight:600}
+.hours-item.closed .time{color:var(--red)}
+
+/* Social strip */
+.social-strip{background:#fff;border-radius:20px;border:1px solid var(--dark-05);padding:24px;display:flex;align-items:center;gap:16px}
+.social-strip-text{font-size:14px;font-weight:600;color:var(--dark);white-space:nowrap}
+.social-strip-links{display:flex;gap:8px;flex:1;justify-content:flex-end}
+.social-link{width:42px;height:42px;border-radius:12px;border:1px solid var(--dark-10);display:flex;align-items:center;justify-content:center;color:var(--dark-30);transition:all .3s var(--transition)}
+.social-link:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-08);transform:translateY(-2px)}
+.social-link svg{width:18px;height:18px}
+
+/* ═══════════════════════════════════
+   FAQ
+   ═══════════════════════════════════ */
+.faq-section{max-width:1360px;margin:0 auto;padding:0 60px 100px}
+.faq-header{text-align:center;margin-bottom:50px}
+.section-eyebrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:16px}
+.ey-line{width:30px;height:1.5px;background:var(--gold)}
+.ey-text{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:4px;color:var(--gold-muted)}
+.faq-title{font-family:'Playfair Display',serif;font-size:clamp(28px,3vw,40px);font-weight:700;color:var(--dark);margin-bottom:10px}
+.faq-title em{font-style:italic;color:var(--navy)}
+.faq-sub{font-size:15px;color:var(--dark-50);max-width:480px;margin:0 auto;font-weight:300}
+
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.faq-item{background:#fff;border-radius:var(--radius);border:1px solid var(--dark-05);overflow:hidden;transition:all .3s var(--transition)}
+.faq-item:hover{border-color:rgba(33,83,135,.1)}
+.faq-item.open{border-color:var(--gold);box-shadow:0 4px 20px rgba(245,165,36,.06)}
+.faq-question{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;transition:background .3s}
+.faq-question:hover{background:var(--dark-05)}
+.faq-q-text{font-size:14.5px;font-weight:600;color:var(--dark);line-height:1.4}
+.faq-q-icon{width:30px;height:30px;border-radius:8px;background:var(--dark-05);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .35s var(--transition)}
+.faq-item.open .faq-q-icon{background:var(--gold);transform:rotate(45deg)}
+.faq-q-icon svg{width:14px;height:14px;color:var(--dark-50);stroke-width:2.5;transition:color .3s}
+.faq-item.open .faq-q-icon svg{color:#fff}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .4s var(--transition),padding .3s}
+.faq-answer-inner{padding:0 24px 20px;font-size:14px;color:var(--dark-50);line-height:1.75}
+.faq-item.open .faq-answer{max-height:300px}
+
+/* ═══════════════════════════════════
+   CTA BANNER
+   ═══════════════════════════════════ */
+.cta-banner{max-width:1360px;margin:0 auto;padding:0 60px 100px}
+.cta-inner{background:linear-gradient(135deg,var(--dark),#1a2538,var(--navy));border-radius:24px;padding:60px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;overflow:hidden}
+.cta-inner::before{content:'';position:absolute;top:-60px;right:-60px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(245,165,36,.06),transparent 70%)}
+.cta-inner-text h2{font-family:'Playfair Display',serif;font-size:clamp(24px,2.5vw,34px);font-weight:700;color:#fff;margin-bottom:10px;position:relative;z-index:1}
+.cta-inner-text h2 em{font-style:italic;color:var(--gold)}
+.cta-inner-text p{font-size:15px;color:rgba(255,255,255,.4);line-height:1.7;position:relative;z-index:1}
+.cta-inner-actions{display:flex;gap:12px;position:relative;z-index:1}
+.cta-gold{padding:16px 32px;background:linear-gradient(135deg,var(--gold),var(--gold-muted));color:var(--dark);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border-radius:14px;display:inline-flex;align-items:center;gap:10px;transition:all .4s}
+.cta-gold:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(245,165,36,.35)}
+.cta-gold svg{width:18px;height:18px;transition:transform .3s}
+.cta-gold:hover svg{transform:translateX(4px)}
+.cta-whatsapp{padding:15px 28px;background:rgba(37,211,102,.12);border:1.5px solid rgba(37,211,102,.2);color:#25d366;font-size:14px;font-weight:600;border-radius:14px;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+.cta-whatsapp:hover{background:rgba(37,211,102,.2);border-color:rgba(37,211,102,.4);transform:translateY(-2px)}
+.cta-whatsapp svg{width:18px;height:18px}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:14px 24px;border-radius:12px;font-size:13.5px;display:flex;align-items:center;gap:10px;box-shadow:0 20px 50px rgba(45,55,72,.2);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.toast svg{width:18px;height:18px;color:var(--gold);flex-shrink:0}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){.contact-cards{grid-template-columns:repeat(2,1fr);margin-top:-40px}.contact-main{padding:60px 30px}.contact-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.contact-cards{grid-template-columns:1fr;padding:0 24px;gap:12px}.contact-hero{padding:70px 24px 60px}.faq-grid{grid-template-columns:1fr}.contact-main{padding:50px 20px}.faq-section{padding:0 20px 70px}.cta-banner{padding:0 20px 70px}.cta-inner{grid-template-columns:1fr;padding:40px 28px;text-align:center}.cta-inner-actions{justify-content:center;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="contact-hero">
+  <div class="hero-glow1"></div><div class="hero-glow2"></div>
+  <div class="contact-hero-content">
+    <div class="hero-eyebrow"><span></span><span class="hero-eyebrow-text">İletişim</span><span></span></div>
+    <h1>Sizinle <em>Tanışmak</em><br>İstiyoruz</h1>
+    <p class="contact-hero-desc">Projeniz hakkında konuşalım. Uzman ekibimiz sorularınızı yanıtlamak ve size özel çözümler sunmak için hazır.</p>
+  </div>
+</section>
+
+<!-- ═══ CONTACT CARDS ═══ -->
+<div class="contact-cards">
+  <div class="c-card reveal"><div class="c-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="c-card-title">Telefon</div><div class="c-card-value"><a href="tel:+902121234567">+90 212 123 45 67</a><br><a href="tel:+902121234568">+90 212 123 45 68</a></div></div>
+  <div class="c-card reveal" style="transition-delay:.06s"><div class="c-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="c-card-title">E-posta</div><div class="c-card-value"><a href="mailto:info@entrymarkcarpets.com">info@entrymarkcarpets.com</a><br><a href="mailto:sales@entrymarkcarpets.com">sales@entrymarkcarpets.com</a></div></div>
+  <div class="c-card reveal" style="transition-delay:.12s"><div class="c-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="c-card-title">Adres</div><div class="c-card-value">Organize Sanayi Bölgesi<br>İstanbul, Türkiye</div></div>
+  <div class="c-card reveal" style="transition-delay:.18s"><div class="c-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div class="c-card-title">WhatsApp</div><div class="c-card-value"><a href="#">+90 532 123 45 67</a><br>7/24 Destek</div></div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<section class="contact-main">
+  <div class="contact-grid">
+
+    <!-- FORM -->
+    <div class="contact-form-wrap reveal">
+      <div class="form-header">
+        <div class="form-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="form-header-text"><h3>Bize Yazın</h3><p>Formu doldurun, en kısa sürede dönüş yapalım</p></div>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Ad<span class="req">*</span></label><input class="form-input" id="cfName" placeholder="Adınız"></div>
+          <div class="form-group"><label class="form-label">Soyad<span class="req">*</span></label><input class="form-input" id="cfLast" placeholder="Soyadınız"></div>
+          <div class="form-group"><label class="form-label">E-posta<span class="req">*</span></label><input class="form-input" id="cfEmail" type="email" placeholder="ornek@email.com"></div>
+          <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" id="cfPhone" type="tel" placeholder="+90 5XX XXX XX XX"></div>
+          <div class="form-group full"><label class="form-label">Şirket Adı</label><input class="form-input" id="cfCompany" placeholder="Şirketinizin adı (opsiyonel)"></div>
+          <div class="form-group full"><label class="form-label">Konu<span class="req">*</span></label><select class="form-input" id="cfSubject"><option value="">Konu seçiniz</option><option>Fiyat Teklifi</option><option>Numune Talebi</option><option>Özel Tasarım</option><option>İhracat / Toptan</option><option>Teknik Destek</option><option>Şikâyet / Öneri</option><option>Diğer</option></select></div>
+          <div class="form-group full"><label class="form-label">Mesajınız<span class="req">*</span></label><textarea class="form-input" id="cfMsg" placeholder="Projeniz hakkında detayları paylaşın..."></textarea></div>
+          <div class="form-group full">
+            <div class="form-checkbox"><input type="checkbox" id="cfConsent"><label for="cfConsent"><a href="#">Gizlilik politikasını</a> okudum ve kişisel verilerimin işlenmesini kabul ediyorum.</label></div>
+          </div>
+        </div>
+        <button class="form-submit" id="cfSubmit">
+          Mesaj Gönder
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="contact-right">
+      <!-- Map -->
+      <div class="map-wrap reveal">
+        <div class="map-pin-dots"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="map-placeholder">
+          <div class="map-placeholder-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="map-placeholder-text">Entry Mark Carpets</div>
+          <div class="map-placeholder-sub">Organize Sanayi Bölgesi, İstanbul</div>
+        </div>
+      </div>
+
+      <!-- Office -->
+      <div class="office-card reveal" style="transition-delay:.1s">
+        <div class="office-card-header">
+          <div class="office-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-6h6v6"/></svg></div>
+          <div><div class="office-card-name">Merkez Ofis & Fabrika</div><div class="office-card-type">İstanbul, Türkiye</div></div>
+        </div>
+        <div class="office-info">
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="office-row-text"><strong>Adres</strong>Organize Sanayi Bölgesi, No: 42<br>Esenyurt / İstanbul, Türkiye 34510</div></div>
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg></div><div class="office-row-text"><strong>Telefon</strong>+90 212 123 45 67 · +90 212 123 45 68</div></div>
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="office-row-text"><strong>E-posta</strong>info@entrymarkcarpets.com</div></div>
+        </div>
+        <div class="office-hours">
+          <div class="office-hours-title">Çalışma Saatleri</div>
+          <div class="hours-grid">
+            <div class="hours-item"><span class="day">Pazartesi – Cuma</span><span class="time">08:30 – 18:00</span></div>
+            <div class="hours-item"><span class="day">Cumartesi</span><span class="time">09:00 – 14:00</span></div>
+            <div class="hours-item closed"><span class="day">Pazar</span><span class="time">Kapalı</span></div>
+            <div class="hours-item"><span class="day">WhatsApp</span><span class="time">7/24</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social -->
+      <div class="social-strip reveal" style="transition-delay:.18s">
+        <span class="social-strip-text">Bizi Takip Edin</span>
+        <div class="social-strip-links">
+          <a href="#" class="social-link" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="social-link" title="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="social-link" title="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" class="social-link" title="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.237 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.425 1.808-2.425.853 0 1.265.64 1.265 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.481 1.806 1.778 0 3.144-1.874 3.144-4.58 0-2.393-1.72-4.068-4.177-4.068-2.845 0-4.515 2.134-4.515 4.34 0 .859.331 1.781.744 2.282a.3.3 0 0 1 .069.288l-.278 1.133"/></svg></a>
+          <a href="#" class="social-link" title="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq-section">
+  <div class="faq-header reveal">
+    <div class="section-eyebrow"><span class="ey-line"></span><span class="ey-text">Sıkça Sorulan Sorular</span><span class="ey-line"></span></div>
+    <h2 class="faq-title">Merak <em>Edilenler</em></h2>
+    <p class="faq-sub">Aklınıza takılan soruların yanıtlarını burada bulabilirsiniz.</p>
+  </div>
+  <div class="faq-grid" id="faqGrid">
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">Minimum sipariş miktarı nedir?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Minimum sipariş miktarımız 1 adet olup, toptan siparişlerde özel fiyatlandırma uygulanmaktadır. 10+ adet siparişlerde %15'e varan indirimlerden yararlanabilirsiniz.</div></div></div>
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">Teslimat süresi ne kadardır?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Standart üretim süresi 5–7 iş günüdür. Express seçeneği ile 72 saat içinde üretime başlanır. Kargo süresi yurt içi 1–3, yurt dışı 5–10 iş günüdür.</div></div></div>
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">Hangi dosya formatlarını kabul ediyorsunuz?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Logo yükleme için PNG, JPG, SVG ve AI formatlarını kabul ediyoruz. Yüksek çözünürlüklü dosyalar (min 300 DPI) en iyi baskı kalitesini sağlar.</div></div></div>
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">Özel ölçü sipariş verebilir miyim?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Evet! Online tasarım stüdyomuzda "Özel Ölçü" seçeneği ile istediğiniz boyutu cm cinsinden girebilirsiniz. Maximum 500×500 cm ölçüye kadar üretim yapılabilir.</div></div></div>
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">Numune talep edebilir miyim?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Elbette! Renk ve malzeme numuneleri ücretsiz olarak gönderilmektedir. İletişim formu üzerinden numune talebinizi iletebilirsiniz.</div></div></div>
+    <div class="faq-item"><div class="faq-question"><span class="faq-q-text">İade ve değişim politikası nedir?</span><div class="faq-q-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-answer"><div class="faq-answer-inner">Standart ürünlerde 14 gün içinde ücretsiz iade/değişim yapılabilir. Özel tasarım ürünlerde üretim onayı sonrası iade kabul edilememektedir.</div></div></div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-banner reveal">
+  <div class="cta-inner">
+    <div class="cta-inner-text">
+      <h2>Projenizi <em>Hemen</em> Başlatın</h2>
+      <p>Online tasarım stüdyomuz ile dakikalar içinde hayalinizdeki paspası oluşturun veya WhatsApp üzerinden bize ulaşın.</p>
+    </div>
+    <div class="cta-inner-actions">
+      <a href="customizer.html" class="cta-gold">Tasarla<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
+      <a href="#" class="cta-whatsapp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- Toast -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span id="toastMsg"></span></div>
+
+<script>
+(()=>{
+  // Reveal
+  const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-question').forEach(q=>{
+    q.addEventListener('click',()=>{
+      const item=q.parentElement;
+      const wasOpen=item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen)item.classList.add('open');
+    });
+  });
+
+  // Form submit
+  document.getElementById('cfSubmit').addEventListener('click',()=>{
+    const fields=['cfName','cfLast','cfEmail','cfSubject','cfMsg'];
+    let valid=true;
+    fields.forEach(f=>{const el=document.getElementById(f);if(!el.value.trim()){el.classList.add('error');valid=false}else el.classList.remove('error')});
+    if(!document.getElementById('cfConsent').checked){valid=false;showToast('Lütfen gizlilik politikasını kabul edin')}
+    if(!valid&&document.getElementById('cfConsent').checked)showToast('Lütfen zorunlu alanları doldurun');
+    if(valid){showToast('Mesajınız başarıyla gönderildi! En kısa sürede dönüş yapacağız.');document.querySelectorAll('.form-input').forEach(i=>{if(i.tagName==='SELECT')i.selectedIndex=0;else i.value=''});document.getElementById('cfConsent').checked=false}
+  });
+
+  document.querySelectorAll('.form-input').forEach(i=>i.addEventListener('focus',()=>i.classList.remove('error')));
+
+  let tt;
+  function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3500)}
+})();
+</script>
+</body>
+</html>

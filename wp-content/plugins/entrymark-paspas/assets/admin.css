@@ -1,0 +1,4 @@
+.emc-admin .emc-card { background:#fff; border:1px solid #c3c4c7; border-radius:4px; padding:1em 1.5em; margin-bottom:1em; box-shadow:0 1px 1px rgba(0,0,0,.04); }
+.emc-admin .emc-card h3 { margin-top:0; }
+#emc_texture_preview { display:inline-block; margin-left:8px; vertical-align:middle; }
+#emc_texture_preview img { max-width:80px; height:auto; vertical-align:middle; }
