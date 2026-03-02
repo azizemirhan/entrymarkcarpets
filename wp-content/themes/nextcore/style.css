@@ -971,6 +971,35 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.search-overlay-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-overlay-input-wrap {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-overlay-submit {
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark, #2D3748);
+  background: var(--gold, #f5a524);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-overlay-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 165, 36, 0.35);
+}
+
 .search-close-btn {
   position: fixed;
   top: 30px;
@@ -998,6 +1027,25 @@ body {
 
 .search-suggestions {
   margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  justify-content: center;
+}
+
+.search-suggestions-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.search-tags-wrap {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -1739,6 +1787,10 @@ body {
   display: flex;
   gap: 10px;
 }
+.footer-social-under-logo {
+  margin-top: 4px;
+  margin-bottom: 18px;
+}
 
 .footer-social a {
   width: 40px;
@@ -1782,15 +1834,35 @@ body {
   display: block;
   padding: 7px 0;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.45);
-  transition: all 0.3s ease;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  transition: color 0.25s ease, padding-left 0.25s ease;
   position: relative;
   padding-left: 0;
+  text-decoration: none;
+}
+
+.footer-links a strong,
+.footer-links a b {
+  font-weight: 400 !important;
 }
 
 .footer-links a:hover {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.85) !important;
   padding-left: 8px;
+}
+
+.footer-links a:focus,
+.footer-links a:focus-visible {
+  color: rgba(255, 255, 255, 0.5) !important;
+  padding-left: 0;
+  outline: 1px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 2px;
+}
+
+.footer-links a:focus::before,
+.footer-links a:focus-visible::before {
+  opacity: 0 !important;
 }
 
 .footer-links a::before {
@@ -1805,12 +1877,64 @@ body {
   border-top: 3px solid transparent;
   border-bottom: 3px solid transparent;
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .footer-links a:hover::before {
   opacity: 1;
   left: 0;
+}
+
+/* Footer Bize Ulaşın sütunu */
+.footer-col-contact .footer-contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-contact-item:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.footer-contact-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--gold-muted, #DDA944);
+}
+
+.footer-contact-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.footer-contact-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold-muted, #DDA944);
+  text-decoration: none;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.footer-contact-link:hover {
+  color: #fff;
+  opacity: 0.95;
 }
 
 /* Footer trust badges */
@@ -1988,8 +2112,7 @@ body {
   .mega-menu { min-width: 600px; }
   .mega-menu-inner { grid-template-columns: 1fr 1fr 260px; }
   .mega-col:nth-child(3) { display: none; }
-  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
-  .footer-grid .footer-col:last-child { display: none; }
+  .footer-grid { grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; }
 }
 
 @media (max-width: 900px) {
@@ -2469,6 +2592,104 @@ body.page-no-sidebar .site-main,
 body.page-no-sidebar #primary {
 	max-width: 100%;
 	width: 100%;
+}
+
+/* Arama sonuçları sayfası — tam genişlik, düzenli liste */
+.site-main--search {
+	padding: 40px 24px 60px;
+}
+
+.search-results-wrap {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.search-results-header {
+	margin-bottom: 36px;
+}
+
+.search-results-title {
+	font-size: clamp(1.5rem, 3vw, 2rem);
+	font-weight: 700;
+	color: var(--dark, #2D3748);
+	margin: 0 0 20px;
+	line-height: 1.3;
+}
+
+.search-results-query {
+	color: var(--navy, #215387);
+	font-weight: 600;
+}
+
+.search-results-form {
+	display: flex;
+	gap: 12px;
+	max-width: 480px;
+}
+
+.search-results-input {
+	flex: 1;
+	padding: 12px 18px;
+	border: 1.5px solid rgba(45, 55, 72, 0.15);
+	border-radius: 12px;
+	font-size: 15px;
+}
+
+.search-results-input:focus {
+	outline: none;
+	border-color: var(--navy, #215387);
+	box-shadow: 0 0 0 3px rgba(33, 83, 135, 0.1);
+}
+
+.search-results-submit {
+	padding: 12px 24px;
+	background: linear-gradient(135deg, var(--gold, #f5a524), #DDA944);
+	color: var(--dark, #2D3748);
+	border: none;
+	border-radius: 12px;
+	font-weight: 600;
+	font-size: 15px;
+	cursor: pointer;
+}
+
+.search-results-submit:hover {
+	opacity: 0.95;
+}
+
+.search-results-list {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.search-results-list .entry-title {
+	font-size: 1.25rem;
+	margin-bottom: 0.5em;
+}
+
+.search-results-list .entry-title a {
+	color: var(--dark, #2D3748);
+	text-decoration: none;
+}
+
+.search-results-list .entry-title a:hover {
+	color: var(--navy, #215387);
+}
+
+.search-results-list .entry-summary {
+	margin-top: 0;
+	color: rgba(45, 55, 72, 0.8);
+	line-height: 1.6;
+}
+
+.search-results-list article {
+	padding-bottom: 24px;
+	border-bottom: 1px solid rgba(45, 55, 72, 0.08);
+}
+
+.search-results-list article:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
 }
 
 /* Alignments

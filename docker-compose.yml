@@ -11,8 +11,8 @@ services:
       WP_URL: ${WP_URL:-http://localhost:9080}
       WP_DEBUG: ${WP_DEBUG:-false}
     volumes:
-      # Yüklenen medya kalıcı olsun
-      - wp-content-uploads:/var/www/html/wp-content/uploads
+      # Yerel uploads klasörü - görseller frontend'de görünsün
+      - ./wp-content/uploads:/var/www/html/wp-content/uploads
       # Yerel tema (nextcore) container'da görünsün - header/footer değişiklikleri için
       - ./wp-content/themes/nextcore:/var/www/html/wp-content/themes/nextcore
       # Yerel eklentiler (Entry Mark Paspas vb.) container'da görünsün
@@ -31,6 +31,8 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
     volumes:
       - db-data:/var/lib/mysql
+      # İlk çalıştırmada entrymarkcarpets-export.sql wordpress DB'ye yüklenir (volume boşken)
+      - ./entrymarkcarpets-export.sql:/docker-entrypoint-initdb.d/entrymarkcarpets-export.sql:ro
     healthcheck:
       test: ["CMD", "sh", "-c", "mysqladmin ping -h localhost -u root -p\"$$MYSQL_ROOT_PASSWORD\""]
       interval: 5s
@@ -41,4 +43,3 @@ services:
 
 volumes:
   db-data:
-  wp-content-uploads:

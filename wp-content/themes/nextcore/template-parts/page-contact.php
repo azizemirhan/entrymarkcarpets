@@ -10,10 +10,30 @@ $contact_get = function ( $key, $default = '' ) {
 };
 
 $privacy_url = get_privacy_policy_url();
+if ( empty( $privacy_url ) && function_exists( 'nextcore_get_page_url' ) ) {
+	$privacy_url = nextcore_get_page_url( 'gizlilik-politikasi', 'template-gizlilik.php' );
+}
 if ( empty( $privacy_url ) ) {
-	$privacy_url = '#';
+	$privacy_url = home_url( '/gizlilik-politikasi/' );
 }
 $form_action = admin_url( 'admin-post.php' );
+
+// WhatsApp numarasından wa.me linki (sadece rakamlar kullanılır)
+$contact_phone_raw = get_option( 'eternal_general_topbar_phone', $contact_get( 'office_phone', '+90 212 123 45 67' ) );
+$whatsapp_number = preg_replace( '/\D/', '', $contact_phone_raw );
+if ( $whatsapp_number === '' ) {
+	$whatsapp_number = '905321234567';
+}
+$whatsapp_url = 'https://wa.me/' . $whatsapp_number;
+
+// Sosyal medya: iletişim sayfası boş/# ise genel (header) ayarları kullan
+$social_fallback = function ( $contact_key, $general_key ) use ( $contact_get ) {
+	$val = $contact_get( $contact_key, '#' );
+	if ( $val === '' || $val === '#' ) {
+		$val = get_option( 'eternal_general_' . $general_key, '#' );
+	}
+	return $val;
+};
 ?>
 
 <div class="contact-page">
@@ -47,7 +67,13 @@ $form_action = admin_url( 'admin-post.php' );
   <div class="c-card reveal">
     <div class="c-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
     <div class="c-card-title"><?php echo esc_html( $contact_get( 'card4_title', 'WhatsApp' ) ); ?></div>
-    <div class="c-card-value"><?php echo wp_kses_post( nl2br( $contact_get( 'card4_value', '<a href="#">+90 532 123 45 67</a><br>7/24 Destek' ) ) ); ?></div>
+    <div class="c-card-value"><?php
+	$card4 = $contact_get( 'card4_value', '<a href="' . esc_url( $whatsapp_url ) . '">+90 532 123 45 67</a><br>7/24 Destek' );
+	if ( strpos( $card4, 'href="#"' ) !== false ) {
+		$card4 = str_replace( 'href="#"', 'href="' . esc_url( $whatsapp_url ) . '"', $card4 );
+	}
+	echo wp_kses_post( nl2br( $card4 ) );
+?></div>
   </div>
 </div>
 
@@ -99,13 +125,23 @@ $form_action = admin_url( 'admin-post.php' );
     </div>
 
     <div class="contact-right">
+      <?php
+      $map_url = $contact_get( 'map_url', '' );
+      if ( $map_url === '' || $map_url === '#' ) {
+        $map_query = $contact_get( 'map_subtitle', 'Organize Sanayi Bölgesi, İstanbul' );
+        if ( empty( $map_query ) ) {
+          $map_query = $contact_get( 'office_address', 'Organize Sanayi Bölgesi, Esenyurt, İstanbul' );
+        }
+        $map_url = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( is_string( $map_query ) ? $map_query : 'Organize Sanayi Bölgesi, İstanbul' );
+      }
+      ?>
       <div class="map-wrap reveal">
         <div class="map-pin-dots"><span></span><span></span><span></span><span></span><span></span></div>
-        <div class="map-placeholder">
+        <a href="<?php echo esc_url( $map_url ); ?>" class="map-placeholder map-placeholder-link" target="_blank" rel="noopener noreferrer" aria-label="<?php esc_attr_e( 'Haritada göster', 'nextcore' ); ?>">
           <div class="map-placeholder-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div class="map-placeholder-text"><?php echo esc_html( $contact_get( 'map_title', 'Entry Mark Carpets' ) ); ?></div>
           <div class="map-placeholder-sub"><?php echo esc_html( $contact_get( 'map_subtitle', 'Organize Sanayi Bölgesi, İstanbul' ) ); ?></div>
-        </div>
+        </a>
       </div>
 
       <div class="office-card reveal">
@@ -117,9 +153,15 @@ $form_action = admin_url( 'admin-post.php' );
           </div>
         </div>
         <div class="office-info">
-          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="office-row-text"><strong>Adres</strong><?php echo wp_kses_post( nl2br( esc_html( $contact_get( 'office_address', "Organize Sanayi Bölgesi, No: 42\nEsenyurt / İstanbul, Türkiye 34510" ) ) ) ); ?></div></div>
-          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg></div><div class="office-row-text"><strong>Telefon</strong><?php echo esc_html( $contact_get( 'office_phone', '+90 212 123 45 67 · +90 212 123 45 68' ) ); ?></div></div>
-          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="office-row-text"><strong>E-posta</strong><?php echo esc_html( $contact_get( 'office_email', 'info@entrymarkcarpets.com' ) ); ?></div></div>
+          <?php
+          $office_address = $contact_get( 'office_address', "Organize Sanayi Bölgesi, No: 42\nEsenyurt / İstanbul, Türkiye 34510" );
+          $office_phone   = $contact_get( 'office_phone', '+90 212 123 45 67 · +90 212 123 45 68' );
+          $office_email  = $contact_get( 'office_email', 'info@entrymarkcarpets.com' );
+          $office_phone_digits = preg_replace( '/\D/', '', $office_phone );
+          ?>
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="office-row-text"><strong>Adres</strong><?php echo wp_kses_post( nl2br( esc_html( $office_address ) ) ); ?></div></div>
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg></div><div class="office-row-text"><strong>Telefon</strong><?php if ( $office_phone_digits !== '' ) : ?><a href="tel:<?php echo esc_attr( $office_phone_digits ); ?>"><?php echo esc_html( $office_phone ); ?></a><?php else : ?><?php echo esc_html( $office_phone ); ?><?php endif; ?></div></div>
+          <div class="office-row"><div class="office-row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="office-row-text"><strong>E-posta</strong><?php if ( is_email( trim( $office_email ) ) ) : ?><a href="mailto:<?php echo esc_attr( $office_email ); ?>"><?php echo esc_html( $office_email ); ?></a><?php else : ?><?php echo esc_html( $office_email ); ?><?php endif; ?></div></div>
         </div>
         <div class="office-hours">
           <div class="office-hours-title"><?php echo esc_html( $contact_get( 'office_hours_title', 'Çalışma Saatleri' ) ); ?></div>
@@ -144,11 +186,11 @@ $form_action = admin_url( 'admin-post.php' );
         <div class="social-strip-links">
           <?php
           $socials = array(
-            'instagram' => array( 'url' => $contact_get( 'social_instagram', '#' ), 'title' => 'Instagram' ),
-            'facebook'  => array( 'url' => $contact_get( 'social_facebook', '#' ), 'title' => 'Facebook' ),
-            'linkedin'  => array( 'url' => $contact_get( 'social_linkedin', '#' ), 'title' => 'LinkedIn' ),
-            'pinterest' => array( 'url' => $contact_get( 'social_pinterest', '#' ), 'title' => 'Pinterest' ),
-            'youtube'   => array( 'url' => $contact_get( 'social_youtube', '#' ), 'title' => 'YouTube' ),
+            'instagram' => array( 'url' => $social_fallback( 'social_instagram', 'social_instagram' ), 'title' => 'Instagram' ),
+            'facebook'  => array( 'url' => $social_fallback( 'social_facebook', 'social_facebook' ), 'title' => 'Facebook' ),
+            'linkedin'  => array( 'url' => $social_fallback( 'social_linkedin', 'social_linkedin' ), 'title' => 'LinkedIn' ),
+            'pinterest' => array( 'url' => $social_fallback( 'social_pinterest', 'social_pinterest' ), 'title' => 'Pinterest' ),
+            'youtube'   => array( 'url' => $social_fallback( 'social_youtube', 'social_youtube' ), 'title' => 'YouTube' ),
           );
           $social_icons = array(
             'instagram' => '<rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
@@ -158,7 +200,7 @@ $form_action = admin_url( 'admin-post.php' );
             'youtube'   => '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>',
           );
           foreach ( $socials as $key => $s ) {
-            if ( empty( $s['url'] ) ) continue;
+            if ( empty( $s['url'] ) || $s['url'] === '#' ) continue;
             echo '<a href="' . esc_url( $s['url'] ) . '" class="social-link" target="_blank" rel="noopener noreferrer" title="' . esc_attr( $s['title'] ) . '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' . $social_icons[ $key ] . '</svg></a>';
           }
           ?>
@@ -196,8 +238,20 @@ $form_action = admin_url( 'admin-post.php' );
       <p><?php echo esc_html( $contact_get( 'cta_desc', 'Online tasarım stüdyomuz ile dakikalar içinde hayalinizdeki paspası oluşturun veya WhatsApp üzerinden bize ulaşın.' ) ); ?></p>
     </div>
     <div class="cta-inner-actions">
-      <a href="<?php echo esc_url( $contact_get( 'cta_design_url', home_url( '/' ) ) ); ?>" class="cta-gold"><?php echo esc_html( $contact_get( 'cta_design_text', 'Tasarla' ) ); ?><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
-      <a href="<?php echo esc_url( $contact_get( 'cta_whatsapp_url', '#' ) ); ?>" class="cta-whatsapp" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>WhatsApp</a>
+      <?php
+          $cta_design_url = $contact_get( 'cta_design_url', '' );
+          if ( $cta_design_url === '' || $cta_design_url === '#' ) {
+            $cta_design_url = function_exists( 'nextcore_get_customizer_url' ) ? nextcore_get_customizer_url() : home_url( '/paspas-ozellestir/' );
+          }
+          ?>
+      <a href="<?php echo esc_url( $cta_design_url ); ?>" class="cta-gold"><?php echo esc_html( $contact_get( 'cta_design_text', 'Tasarla' ) ); ?><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></a>
+      <?php
+          $cta_wa_url = $contact_get( 'cta_whatsapp_url', $whatsapp_url );
+          if ( $cta_wa_url === '' || $cta_wa_url === '#' ) {
+            $cta_wa_url = $whatsapp_url;
+          }
+          ?>
+      <a href="<?php echo esc_url( $cta_wa_url ); ?>" class="cta-whatsapp" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>WhatsApp</a>
     </div>
   </div>
 </section>

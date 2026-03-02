@@ -182,23 +182,6 @@
       });
     });
 
-    // ─── Wishlist toggle heart animation ───
-    const wishlistBtn = document.getElementById('wishlistBtn');
-    if (wishlistBtn) {
-      wishlistBtn.addEventListener('click', function() {
-        const svg = wishlistBtn.querySelector('svg');
-        if (svg) {
-          const isFilled = svg.getAttribute('fill') !== 'none';
-          svg.setAttribute('fill', isFilled ? 'none' : 'var(--gold)');
-          svg.style.color = isFilled ? 'var(--dark)' : 'var(--gold)';
-          wishlistBtn.style.transform = 'scale(1.2)';
-          setTimeout(function() {
-            wishlistBtn.style.transform = '';
-          }, 200);
-        }
-      });
-    }
-
     // ─── Back to Top ───
     const backToTop = document.getElementById('backToTop');
     if (backToTop) {

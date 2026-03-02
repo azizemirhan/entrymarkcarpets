@@ -116,6 +116,167 @@ function nextcore_content_width() {
 add_action( 'after_setup_theme', 'nextcore_content_width', 0 );
 
 /**
+ * Giriş yap sayfası URL’i (slug: giris veya “Giriş yap” şablonlu sayfa)
+ */
+function nextcore_get_giris_url() {
+	$page = get_page_by_path( 'giris' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	$pages = get_pages( array( 'meta_key' => '_wp_page_template', 'meta_value' => 'template-giris.php' ) );
+	if ( ! empty( $pages ) ) {
+		return get_permalink( $pages[0] );
+	}
+	return home_url( '/giris/' );
+}
+
+/**
+ * Kayıt ol sayfası URL’i (slug: kayit veya “Kayıt ol” şablonlu sayfa)
+ */
+function nextcore_get_kayit_url() {
+	$page = get_page_by_path( 'kayit' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	$pages = get_pages( array( 'meta_key' => '_wp_page_template', 'meta_value' => 'template-kayit.php' ) );
+	if ( ! empty( $pages ) ) {
+		return get_permalink( $pages[0] );
+	}
+	return home_url( '/kayit/' );
+}
+
+/**
+ * Hesabım sayfası URL’i (slug: hesabim veya “Hesabım” şablonlu sayfa)
+ */
+function nextcore_get_hesabim_url() {
+	$page = get_page_by_path( 'hesabim' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	$pages = get_pages( array( 'meta_key' => '_wp_page_template', 'meta_value' => 'template-hesabim.php' ) );
+	if ( ! empty( $pages ) ) {
+		return get_permalink( $pages[0] );
+	}
+	return home_url( '/hesabim/' );
+}
+
+/**
+ * Slug veya şablona göre sayfa URL’i döndürür (sayfa yoksa home_url fallback).
+ *
+ * @param string $slug    Sayfa slug (örn. galeri, iletisim).
+ * @param string $template Opsiyonel. Şablon dosya adı (örn. template-gallery.php).
+ * @return string Sayfa permalink veya home_url( '/slug/' ).
+ */
+function nextcore_get_sifre_sifirlama_url() {
+	$page = get_page_by_path( 'sifre-sifirlama' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	$pages = get_pages( array( 'meta_key' => '_wp_page_template', 'meta_value' => 'template-sifre-sifirlama.php' ) );
+	if ( ! empty( $pages ) ) {
+		return get_permalink( $pages[0] );
+	}
+	return home_url( '/sifre-sifirlama/' );
+}
+
+/**
+ * Slug veya şablona göre sayfa URL'i döndürür (sayfa yoksa home_url fallback).
+ *
+ * @param string $slug    Sayfa slug (örn. galeri, iletisim).
+ * @param string $template Opsiyonel. Şablon dosya adı (örn. template-gallery.php).
+ * @return string Sayfa permalink veya home_url( '/slug/' ).
+ */
+function nextcore_get_page_url( $slug, $template = '' ) {
+	$page = get_page_by_path( $slug );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	if ( $template ) {
+		$pages = get_pages( array(
+			'meta_key'   => '_wp_page_template',
+			'meta_value' => $template,
+			'number'     => 1,
+		) );
+		if ( ! empty( $pages ) ) {
+			return get_permalink( $pages[0] );
+		}
+	}
+	return home_url( '/' . $slug . '/' );
+}
+
+/**
+ * Paspas özelleştirici sayfası URL’i (paspas-ozellestir veya ozellestir).
+ *
+ * @return string Özelleştirici sayfası permalink.
+ */
+function nextcore_get_customizer_url() {
+	$page = get_page_by_path( 'paspas-ozellestir' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	$page = get_page_by_path( 'ozellestir' );
+	if ( $page ) {
+		return get_permalink( $page );
+	}
+	return home_url( '/paspas-ozellestir/' );
+}
+
+/**
+ * /hesabim/ adresi 404 veriyorsa Hesabım şablonunu göster (sayfa oluşturulmamış olsa bile)
+ */
+function nextcore_hesabim_404_fallback( $template ) {
+	if ( ! is_404() ) {
+		return $template;
+	}
+	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	$path = trim( parse_url( $request_uri, PHP_URL_PATH ), '/' );
+	$parts = array_filter( explode( '/', $path ) );
+	$first = isset( $parts[0] ) ? $parts[0] : '';
+	if ( $first === 'hesabim' || $first === 'hesabim.php' ) {
+		$GLOBALS['nextcore_hesabim_fallback'] = true;
+		status_header( 200 );
+		return get_template_directory() . '/template-hesabim.php';
+	}
+	if ( $first === 'giris' || $first === 'giris.php' ) {
+		$GLOBALS['nextcore_giris_fallback'] = true;
+		status_header( 200 );
+		return get_template_directory() . '/template-giris.php';
+	}
+	if ( $first === 'kayit' || $first === 'kayit.php' ) {
+		$GLOBALS['nextcore_kayit_fallback'] = true;
+		status_header( 200 );
+		return get_template_directory() . '/template-kayit.php';
+	}
+	if ( $first === 'sifre-sifirlama' || $first === 'sifre-sifirlama.php' ) {
+		$GLOBALS['nextcore_sifre_sifirlama_fallback'] = true;
+		status_header( 200 );
+		return get_template_directory() . '/template-sifre-sifirlama.php';
+	}
+	return $template;
+}
+add_filter( 'template_include', 'nextcore_hesabim_404_fallback', 99 );
+
+/**
+ * Hesabım / Kayıt ol 404 fallback kullanıldığında sayfa başlığını düzelt
+ */
+function nextcore_hesabim_document_title( $title_parts ) {
+	if ( ! empty( $GLOBALS['nextcore_hesabim_fallback'] ) ) {
+		$title_parts['title'] = __( 'Hesabım', 'nextcore' );
+	}
+	if ( ! empty( $GLOBALS['nextcore_giris_fallback'] ) ) {
+		$title_parts['title'] = __( 'Giriş yap', 'nextcore' );
+	}
+	if ( ! empty( $GLOBALS['nextcore_kayit_fallback'] ) ) {
+		$title_parts['title'] = __( 'Kayıt ol', 'nextcore' );
+	}
+	if ( ! empty( $GLOBALS['nextcore_sifre_sifirlama_fallback'] ) ) {
+		$title_parts['title'] = __( 'Şifre sıfırlama', 'nextcore' );
+	}
+	return $title_parts;
+}
+add_filter( 'document_title_parts', 'nextcore_hesabim_document_title', 99 );
+
+/**
  * Register widget area.
  *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
@@ -134,6 +295,56 @@ function nextcore_widgets_init() {
 	);
 }
 add_action( 'widgets_init', 'nextcore_widgets_init' );
+
+/**
+ * Arama: hem yazı hem sayfa dahil olsun (varsayılan sadece post).
+ */
+function nextcore_search_post_types( $query ) {
+	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
+		$query->set( 'post_type', array( 'post', 'page' ) );
+	}
+}
+add_action( 'pre_get_posts', 'nextcore_search_post_types' );
+
+/**
+ * Veritabanındaki sayfa başlıklarında Türkçe karakter (UTF-8) bozulmasını tek seferlik düzeltir.
+ * Yönetim paneli > Sayfalar listesinde "Çerez Politikası", "Değerlerimiz" vb. doğru görünür.
+ */
+function nextcore_fix_turkish_page_titles() {
+	if ( ! is_admin() ) {
+		return;
+	}
+	if ( get_option( 'nextcore_turkish_titles_fixed', '' ) === 'yes' ) {
+		return;
+	}
+
+	$template_to_title = array(
+		'template-cerez.php'       => 'Çerez Politikası',
+		'template-degerlerimiz.php' => 'Değerlerimiz',
+		'template-gizlilik.php'    => 'Gizlilik Politikası',
+		'template-kullanim.php'    => 'Kullanım Koşulları',
+	);
+
+	foreach ( $template_to_title as $template => $correct_title ) {
+		$pages = get_posts( array(
+			'post_type'      => 'page',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'meta_key'       => '_wp_page_template',
+			'meta_value'     => $template,
+			'fields'         => 'ids',
+		) );
+		foreach ( $pages as $page_id ) {
+			wp_update_post( array(
+				'ID'         => $page_id,
+				'post_title' => $correct_title,
+			) );
+		}
+	}
+
+	update_option( 'nextcore_turkish_titles_fixed', 'yes' );
+}
+add_action( 'admin_init', 'nextcore_fix_turkish_page_titles' );
 
 /**
  * Enqueue scripts and styles.
@@ -219,6 +430,165 @@ function nextcore_scripts() {
 			true
 		);
 	}
+
+	// Kullanım Koşulları sayfası
+	if ( is_page_template( 'template-kullanim.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-kullanim',
+			get_template_directory_uri() . '/assets/css/page-kullanim.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	if ( is_page_template( 'template-degerlerimiz.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-degerlerimiz',
+			get_template_directory_uri() . '/assets/css/page-degerlerimiz.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	if ( is_page_template( 'template-yardim-merkezi.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-yardim-merkezi',
+			get_template_directory_uri() . '/assets/css/page-yardim-merkezi.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	if ( is_page_template( 'template-surdurulebilirlik.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-surdurulebilirlik',
+			get_template_directory_uri() . '/assets/css/page-surdurulebilirlik.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	// Gizlilik Politikası sayfası
+	if ( is_page_template( 'template-gizlilik.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-gizlilik',
+			get_template_directory_uri() . '/assets/css/page-gizlilik.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	// Çerez Politikası sayfası
+	if ( is_page_template( 'template-cerez.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-cerez',
+			get_template_directory_uri() . '/assets/css/page-cerez.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	// KVKK Aydınlatma Metni sayfası
+	if ( is_page_template( 'template-kvkk.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-kvkk',
+			get_template_directory_uri() . '/assets/css/page-kvkk.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	// Galeri sayfası şablonu — Next Content (Galeri) ile yönetilen metinler JS'e aktarılır
+	if ( is_page_template( 'template-gallery.php' ) ) {
+		wp_enqueue_style(
+			'nextcore-page-gallery',
+			get_template_directory_uri() . '/assets/css/page-gallery.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+		wp_enqueue_script(
+			'nextcore-page-gallery',
+			get_template_directory_uri() . '/js/page-gallery.js',
+			array(),
+			_S_VERSION,
+			true
+		);
+		$customizer_url = get_option( 'eternal_gallery_hero_customizer_url', get_option( 'eternal_gallery_customizer_url', '' ) );
+		if ( empty( $customizer_url ) ) {
+			$customizer_url = home_url( '/paspas-ozellestir/' );
+		}
+		$tag_by_category_raw = get_option( 'eternal_gallery_lightbox_tag_by_category', "hotel|OTEL KOLEKSİYONU\noffice|OFİS KOLEKSİYONU\ncustom|ÖZEL TASARIM\nresidential|KONUT KOLEKSİYONU" );
+		$tag_by_category = array();
+		foreach ( array_filter( array_map( 'trim', explode( "\n", $tag_by_category_raw ) ) ) as $row ) {
+			$parts = array_map( 'trim', explode( '|', $row, 2 ) );
+			if ( count( $parts ) >= 2 ) {
+				$tag_by_category[ $parts[0] ] = $parts[1];
+			}
+		}
+		$gallery_items = array();
+		$products_json = get_option( 'eternal_gallery_products_json', '' );
+		if ( ! empty( $products_json ) ) {
+			$decoded = json_decode( $products_json, true );
+			if ( is_array( $decoded ) && ! empty( $decoded ) ) {
+				$gallery_items = $decoded;
+			}
+		}
+		$localize = array(
+			'customizerUrl'       => $customizer_url,
+			'loadMoreText'        => get_option( 'eternal_gallery_grid_load_more_text', 'Daha Fazla Göster' ),
+			'counterFormat'       => get_option( 'eternal_gallery_grid_counter_text', '%shown% / %total% ürün gösteriliyor' ),
+			'initialCount'        => (int) get_option( 'eternal_gallery_grid_initial_count', 8 ),
+			'tagByCategory'       => $tag_by_category,
+			'tagDefault'          => get_option( 'eternal_gallery_lightbox_tag_default', 'KOLEKSİYON' ),
+			'labelMaterial'       => get_option( 'eternal_gallery_lightbox_label_material', 'Malzeme' ),
+			'labelSize'           => get_option( 'eternal_gallery_lightbox_label_size', 'Boyut' ),
+			'labelThickness'      => get_option( 'eternal_gallery_lightbox_label_thickness', 'Kalınlık' ),
+			'labelPrice'          => get_option( 'eternal_gallery_lightbox_label_price', 'Fiyat' ),
+			'btnCustomize'        => get_option( 'eternal_gallery_lightbox_btn_customize', 'Özelleştir' ),
+			'badgeNew'             => get_option( 'eternal_gallery_badge_new', 'Yeni' ),
+			'badgePopular'         => get_option( 'eternal_gallery_badge_popular', 'Popüler' ),
+			'badgeSale'            => get_option( 'eternal_gallery_badge_sale', 'İndirim' ),
+		);
+		if ( ! empty( $gallery_items ) ) {
+			$localize['items'] = $gallery_items;
+		}
+		wp_localize_script( 'nextcore-page-gallery', 'nextcoreGallery', $localize );
+	}
+
+	// Hesabım sayfası — şablon seçili sayfa veya 404 fallback (/hesabim/) için de yükle
+	$is_hesabim = is_page_template( 'template-hesabim.php' );
+	if ( ! $is_hesabim ) {
+		$req_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$p       = trim( parse_url( $req_uri, PHP_URL_PATH ), '/' );
+		$segments = array_filter( explode( '/', $p ) );
+		$is_hesabim = ( isset( $segments[0] ) && $segments[0] === 'hesabim' );
+	}
+	if ( $is_hesabim ) {
+		wp_enqueue_style(
+			'nextcore-page-hesabim',
+			get_template_directory_uri() . '/assets/css/page-hesabim.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
+
+	// Giriş, Kayıt ol, Şifre sıfırlama sayfaları — şablon seçili veya 404 fallback için auth CSS yükle
+	$is_auth_page = is_page_template( 'template-giris.php' ) || is_page_template( 'template-kayit.php' ) || is_page_template( 'template-sifre-sifirlama.php' );
+	if ( ! $is_auth_page ) {
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$path        = trim( parse_url( $request_uri, PHP_URL_PATH ), '/' );
+		$parts       = array_filter( explode( '/', $path ) );
+		$first       = isset( $parts[0] ) ? $parts[0] : '';
+		$is_auth_page = ( $first === 'giris' || $first === 'kayit' || $first === 'sifre-sifirlama' );
+	}
+	if ( $is_auth_page ) {
+		wp_enqueue_style(
+			'nextcore-page-auth',
+			get_template_directory_uri() . '/assets/css/page-auth.css',
+			array( 'nextcore-style' ),
+			_S_VERSION
+		);
+	}
 }
 add_action( 'wp_enqueue_scripts', 'nextcore_scripts' );
 
@@ -264,6 +634,86 @@ function nextcore_handle_contact_submit() {
 }
 add_action( 'admin_post_entrymark_contact_submit', 'nextcore_handle_contact_submit' );
 add_action( 'admin_post_nopriv_entrymark_contact_submit', 'nextcore_handle_contact_submit' );
+
+/**
+ * Kayıt ol formu gönderimi — şifre belirleme ile
+ */
+function nextcore_handle_register_submit() {
+	$redirect_base = function_exists( 'nextcore_get_kayit_url' ) ? nextcore_get_kayit_url() : home_url( '/kayit/' );
+	$redirect_base = trailingslashit( strtok( $redirect_base, '?' ) );
+	$hesabim_url   = function_exists( 'nextcore_get_hesabim_url' ) ? nextcore_get_hesabim_url() : home_url( '/hesabim/' );
+
+	if ( ! get_option( 'users_can_register' ) ) {
+		wp_safe_redirect( add_query_arg( 'registration', 'disabled', $redirect_base ) );
+		exit;
+	}
+
+	if ( ! isset( $_POST['register_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['register_nonce'] ) ), 'entrymark_register' ) ) {
+		wp_safe_redirect( add_query_arg( 'reg_error', urlencode( __( 'Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.', 'nextcore' ) ), $redirect_base ) );
+		exit;
+	}
+
+	$user_login = isset( $_POST['user_login'] ) ? sanitize_user( wp_unslash( $_POST['user_login'] ) ) : '';
+	$user_email = isset( $_POST['user_email'] ) ? sanitize_email( wp_unslash( $_POST['user_email'] ) ) : '';
+	$user_pass  = isset( $_POST['user_pass'] ) ? wp_unslash( $_POST['user_pass'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$user_pass2 = isset( $_POST['user_pass2'] ) ? wp_unslash( $_POST['user_pass2'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+
+	if ( ! $user_login || ! $user_email || ! $user_pass ) {
+		wp_safe_redirect( add_query_arg( 'reg_error', urlencode( __( 'Tüm alanları doldurun.', 'nextcore' ) ), $redirect_base ) );
+		exit;
+	}
+
+	if ( strlen( $user_pass ) < 6 ) {
+		wp_safe_redirect( add_query_arg( 'reg_error', urlencode( __( 'Şifre en az 6 karakter olmalıdır.', 'nextcore' ) ), $redirect_base ) );
+		exit;
+	}
+
+	if ( $user_pass !== $user_pass2 ) {
+		wp_safe_redirect( add_query_arg( 'reg_error', urlencode( __( 'Şifreler eşleşmiyor.', 'nextcore' ) ), $redirect_base ) );
+		exit;
+	}
+
+	if ( email_exists( $user_email ) ) {
+		wp_safe_redirect( add_query_arg( array( 'reg_error' => urlencode( __( 'Bu e-posta adresi zaten kayıtlı.', 'nextcore' ) ), 'user_login' => $user_login, 'user_email' => $user_email ), $redirect_base ) );
+		exit;
+	}
+
+	// Kullanıcı adı benzersiz olmalı (WP zorunluluğu); aynı ad varsa benzersiz login oluştur
+	$wp_login = $user_login;
+	if ( username_exists( $user_login ) ) {
+		$wp_login = $user_login . '_' . wp_rand( 100, 9999 );
+		while ( username_exists( $wp_login ) ) {
+			$wp_login = $user_login . '_' . wp_rand( 100, 9999 );
+		}
+	}
+
+	$user_id = wp_insert_user(
+		array(
+			'user_login'   => $wp_login,
+			'user_email'   => $user_email,
+			'user_pass'    => $user_pass,
+			'display_name' => $user_login,
+			'role'         => get_option( 'default_role', 'subscriber' ),
+		)
+	);
+
+	if ( is_wp_error( $user_id ) ) {
+		wp_safe_redirect( add_query_arg( 'reg_error', urlencode( $user_id->get_error_message() ), $redirect_base ) );
+		exit;
+	}
+
+	// Başarılı — otomatik giriş ve Hesabım'a yönlendir
+	$redirect_to = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : $hesabim_url;
+	if ( strpos( $redirect_to, home_url() ) !== 0 ) {
+		$redirect_to = $hesabim_url;
+	}
+	wp_set_current_user( $user_id );
+	wp_set_auth_cookie( $user_id );
+	wp_safe_redirect( $redirect_to );
+	exit;
+}
+add_action( 'admin_post_entrymark_register', 'nextcore_handle_register_submit' );
+add_action( 'admin_post_nopriv_entrymark_register', 'nextcore_handle_register_submit' );
 
 /**
  * Implement the Custom Header feature.

@@ -35,6 +35,8 @@
     isDragging: false,
     dragType: null,
     dragId: null,
+    textSelected: false,
+    fullscreenZoom: 1,
     textures: [],
     sizes: [],
     shippings: []
@@ -93,6 +95,8 @@
     els.italicBtn = document.getElementById('emcItalicBtn');
     els.textColor = document.getElementById('emcTextColor');
     els.fontSelect = document.getElementById('emcFontSelect');
+    els.textSize = document.getElementById('emcTextSize');
+    els.textSizeValue = document.getElementById('emcTextSizeValue');
     
     // Summary
     els.summaryToggle = document.getElementById('emcSummaryToggle');
@@ -116,6 +120,29 @@
     // Overlay
     els.toast = document.getElementById('emcToast');
     els.loading = document.getElementById('emcLoading');
+    // Önizleme sayfası
+    els.previewOverlay = document.getElementById('emcPreviewOverlay');
+    els.previewBackdrop = document.getElementById('emcPreviewBackdrop');
+    els.previewClose = document.getElementById('emcPreviewClose');
+    els.previewImage = document.getElementById('emcPreviewImage');
+    els.previewSizeBadge = document.getElementById('emcPreviewSizeBadge');
+    els.previewShape = document.getElementById('emcPreviewShape');
+    els.previewTexture = document.getElementById('emcPreviewTexture');
+    els.previewSize = document.getElementById('emcPreviewSize');
+    els.previewShipping = document.getElementById('emcPreviewShipping');
+    els.previewTotal = document.getElementById('emcPreviewTotal');
+    els.previewBack = document.getElementById('emcPreviewBack');
+    els.previewAddCart = document.getElementById('emcPreviewAddCart');
+    els.previewZoomBtn = document.getElementById('emcPreviewZoomBtn');
+    els.previewFullscreen = document.getElementById('emcPreviewFullscreen');
+    els.previewFullscreenClose = document.getElementById('emcPreviewFullscreenClose');
+    els.previewFullscreenBackdrop = document.getElementById('emcPreviewFullscreenBackdrop');
+    els.previewFullscreenImage = document.getElementById('emcPreviewFullscreenImage');
+    els.previewFullscreenImgWrap = document.getElementById('emcPreviewFullscreenImgWrap');
+    els.fsZoomOut = document.getElementById('emcFsZoomOut');
+    els.fsZoomIn = document.getElementById('emcFsZoomIn');
+    els.fsZoomReset = document.getElementById('emcFsZoomReset');
+    els.fsZoomValue = document.getElementById('emcFsZoomValue');
   }
 
   // ===== UTILS =====
@@ -208,13 +235,16 @@
     // Process sizes for current shape
     updateSizesForShape();
     
-    // Load texture images
+    // Sitedeki gerçek dokular: görselleri yükle (canvas desen + liste önizlemesi için)
     state.textures.forEach((t, i) => {
-      t.id = t.id || `tex_${i}`;
+      t.id = t.id || 't-' + (i + 1);
       t.price_per_m2 = data.pricing?.price_per_m2 ?? 20.45;
       if (t.image_url) {
         t.img = new Image();
-        t.img.crossOrigin = 'anonymous';
+        try {
+          const texOrigin = new URL(t.image_url).origin;
+          if (texOrigin !== window.location.origin) t.img.crossOrigin = 'anonymous';
+        } catch (e) { /* aynı sayfa içi URL */ }
         t.img.onload = () => { t.loaded = true; render(); };
         t.img.onerror = () => { t.loaded = false; render(); };
         t.img.src = t.image_url;
@@ -232,6 +262,10 @@
       ).join('');
       state.textFont = fonts[0].family || fonts[0].name || 'Arial, sans-serif';
       els.fontSelect.value = state.textFont;
+    }
+    if (els.textSize) {
+      els.textSize.value = Math.round(state.textScale * 100);
+      if (els.textSizeValue) els.textSizeValue.textContent = Math.round(state.textScale * 100) + '%';
     }
     
     // Önce texture'u seç (fiyat için gerekli)
@@ -357,6 +391,17 @@
         console.log('5. Setting textColor:', textColor);
         state.textColor = textColor;
         els.textColor.value = textColor;
+      }
+      
+      // Yazı boyutu (textScale) ayarla
+      const textScaleParam = params.get('textScale');
+      if (textScaleParam !== null && textScaleParam !== '') {
+        const scale = parseFloat(textScaleParam);
+        if (!Number.isNaN(scale) && scale >= 50 && scale <= 300) {
+          state.textScale = scale / 100;
+          if (els.textSize) els.textSize.value = Math.round(scale);
+          if (els.textSizeValue) els.textSizeValue.textContent = Math.round(scale) + '%';
+        }
       }
       
       // Logo/Images yükle
@@ -501,14 +546,18 @@
       els.textureList.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:#666;font-size:0.95em">Doku bulunamadı.<br><small>Yönetici: WordPress → Paspas → Dokular sayfasından en az bir doku (ad + görsel) ekleyip kaydedin.</small></div>';
       return;
     }
-    
+
+    // Sitedeki gerçek dokular (Paspas → Dokular): görsel + ad
     els.textureList.innerHTML = state.textures.map((t, i) => {
       const imageUrl = (t.image_url || t.url || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
       const nameSafe = (t.name || 'Doku ' + (i + 1)).replace(/</g, '&lt;').replace(/"/g, '&quot;');
+      const previewHtml = imageUrl
+        ? `<img src="${imageUrl}" alt="${nameSafe}" loading="lazy" onerror="this.onerror=null;this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='block';"><span style="display:none;font-size:12px;color:#999">Resim yok</span>`
+        : '<span style="font-size:12px;color:#999">Resim yok</span>';
       return `
       <div class="texture-item ${t.id === state.textureId ? 'active' : ''}" data-id="${t.id}" data-index="${i}">
         <div style="aspect-ratio:1;background:#f0f0f0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-          ${imageUrl ? `<img src="${imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\'font-size:12px;color:#999\'>Resim yok</span>'">` : '<span style="font-size:12px;color:#999">Resim yok</span>'}
+          ${previewHtml}
         </div>
         <span>${nameSafe}</span>
       </div>
@@ -675,10 +724,12 @@
     }
     ctx.fill();
     
-    // Border
+    // Çerçeve: çerçeveli halıda koyu, belirgin kenarlık (referans görsel gibi)
     if (!state.recess) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#0d0d0d';
+      ctx.lineWidth = 12;
+      ctx.lineJoin = 'miter';
+      ctx.lineCap = 'butt';
       ctx.stroke();
     }
     
@@ -739,13 +790,46 @@
     if (state.text) {
       const fontSize = 24 * state.textScale * (w / 300);
       ctx.font = `${state.textBold ? 'bold ' : ''}${state.textItalic ? 'italic ' : ''}${fontSize}px ${state.textFont}`;
+      const tx = cx - w/2 + state.textX * w;
+      const ty = cy - h/2 + state.textY * h;
+      const tw = ctx.measureText(state.text).width;
+      const th = fontSize * 1.2;
+      const boxX = tx - tw/2;
+      const boxY = ty - th/2;
+      state._textBox = { x: boxX, y: boxY, w: tw, h: th };
       ctx.fillStyle = state.textColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.shadowColor = 'rgba(0,0,0,0.5)';
       ctx.shadowBlur = 4;
-      ctx.fillText(state.text, cx - w/2 + state.textX * w, cy - h/2 + state.textY * h);
+      ctx.fillText(state.text, tx, ty);
       ctx.shadowBlur = 0;
+      // Yazı seçiliyse resim gibi çerçeve ve köşe tutamaçları (sadece ana canvas)
+      if (state.textSelected && !isSummary) {
+        const handleSize = 8;
+        ctx.strokeStyle = '#d4a84b';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 3]);
+        ctx.strokeRect(boxX - 2, boxY - 2, tw + 4, th + 4);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#d4a84b';
+        ctx.fillRect(boxX - handleSize, boxY - handleSize, handleSize * 2, handleSize * 2);
+        ctx.fillRect(boxX + tw - handleSize, boxY - handleSize, handleSize * 2, handleSize * 2);
+        ctx.fillRect(boxX - handleSize, boxY + th - handleSize, handleSize * 2, handleSize * 2);
+        ctx.fillRect(boxX + tw - handleSize, boxY + th - handleSize, handleSize * 2, handleSize * 2);
+        state._textHandles = {
+          tl: { x: boxX - handleSize, y: boxY - handleSize, w: handleSize * 2, h: handleSize * 2, cursor: 'nwse-resize' },
+          tr: { x: boxX + tw - handleSize, y: boxY - handleSize, w: handleSize * 2, h: handleSize * 2, cursor: 'nesw-resize' },
+          bl: { x: boxX - handleSize, y: boxY + th - handleSize, w: handleSize * 2, h: handleSize * 2, cursor: 'nesw-resize' },
+          br: { x: boxX + tw - handleSize, y: boxY + th - handleSize, w: handleSize * 2, h: handleSize * 2, cursor: 'nwse-resize' }
+        };
+      } else {
+        state._textHandles = null;
+      }
+    } else {
+      state._textHandles = null;
+      state._textBox = null;
+      state.textSelected = false;
     }
     
     ctx.restore();
@@ -762,9 +846,25 @@
   }
 
   function render() {
-    drawCanvas(els.mainCtx, els.mainCanvas, false);
-    drawCanvas(els.summaryCtx, els.summaryCanvas, true);
-    updateSummary();
+    // Canvas'ta web font kullanılıyorsa, font yüklenene kadar bekle
+    const fontStr = (state.textFont || 'Arial, sans-serif').split(',')[0].trim();
+    const isWebFont = fontStr && !/^(Arial|Georgia|Verdana|Times New Roman|Courier New)$/i.test(fontStr.replace(/^["']|["']$/g, ''));
+    if (state.text && isWebFont && document.fonts && document.fonts.load) {
+      const loadStr = '16px ' + (state.textFont || 'Arial, sans-serif');
+      document.fonts.load(loadStr).then(function() {
+        drawCanvas(els.mainCtx, els.mainCanvas, false);
+        drawCanvas(els.summaryCtx, els.summaryCanvas, true);
+        updateSummary();
+      }).catch(function() {
+        drawCanvas(els.mainCtx, els.mainCanvas, false);
+        drawCanvas(els.summaryCtx, els.summaryCanvas, true);
+        updateSummary();
+      });
+    } else {
+      drawCanvas(els.mainCtx, els.mainCanvas, false);
+      drawCanvas(els.summaryCtx, els.summaryCanvas, true);
+      updateSummary();
+    }
   }
 
   // ===== SUMMARY & PRICING =====
@@ -916,8 +1016,14 @@
 
   function hitTest(nx, ny) {
     const { w, h, cx, cy } = getCanvasDims();
-    const x = nx * els.mainCanvas.width;
-    const y = ny * els.mainCanvas.height;
+    let x = nx * els.mainCanvas.width;
+    let y = ny * els.mainCanvas.height;
+    if (state.zoom && state.zoom !== 1) {
+      const cw = els.mainCanvas.width;
+      const ch = els.mainCanvas.height;
+      x = (x - cw / 2) / state.zoom + cw / 2;
+      y = (y - ch / 2) / state.zoom + ch / 2;
+    }
     
     // Check images (reverse order - top first)
     for (let i = state.images.length - 1; i >= 0; i--) {
@@ -952,12 +1058,25 @@
       }
     }
     
-    // Check text
+    // Check text: önce tutamaçlar (yazı seçiliyse), sonra yazı alanı
     if (state.text) {
-      const tx = cx - w/2 + state.textX * w;
-      const ty = cy - h/2 + state.textY * h;
-      const tw = els.mainCtx.measureText(state.text).width;
-      if (Math.abs(x - tx) < tw/2 && Math.abs(y - ty) < 25) {
+      if (state.textSelected && state._textHandles) {
+        for (const [handle, rect] of Object.entries(state._textHandles)) {
+          if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) {
+            return {
+              type: 'textResize',
+              handle: handle,
+              cursor: rect.cursor,
+              startX: x,
+              startY: y,
+              startScale: state.textScale
+            };
+          }
+        }
+      }
+      if (state._textBox && x >= state._textBox.x && x <= state._textBox.x + state._textBox.w && y >= state._textBox.y && y <= state._textBox.y + state._textBox.h) {
+        const tx = state._textBox.x + state._textBox.w / 2;
+        const ty = state._textBox.y + state._textBox.h / 2;
         return { type: 'text', offsetX: x - tx, offsetY: y - ty };
       }
     }
@@ -978,21 +1097,35 @@
       
       if (hit.type === 'image') {
         state.selectedImageId = hit.id;
+        state.textSelected = false;
         renderImages();
         els.mainCanvas.style.cursor = 'grabbing';
       } else if (hit.type === 'resize') {
         state.selectedImageId = hit.id;
+        state.textSelected = false;
         state.resizeHandle = hit.handle;
         state.startScale = hit.startScale;
         state.startX = hit.startX;
         state.startY = hit.startY;
         els.mainCanvas.style.cursor = hit.cursor;
         renderImages();
+      } else if (hit.type === 'text') {
+        state.textSelected = true;
+        state.selectedImageId = null;
+        renderImages();
+        els.mainCanvas.style.cursor = 'grabbing';
+      } else if (hit.type === 'textResize') {
+        state.resizeHandle = hit.handle;
+        state.startScale = hit.startScale;
+        state.startX = hit.startX;
+        state.startY = hit.startY;
+        els.mainCanvas.style.cursor = hit.cursor;
       }
       
       render();
     } else {
       state.selectedImageId = null;
+      state.textSelected = false;
       renderImages();
       render();
     }
@@ -1003,9 +1136,11 @@
     
     if (!state.isDragging) {
       const hit = hitTest(pos.x, pos.y);
-      if (hit?.type === 'resize') {
+      if (hit?.type === 'resize' || hit?.type === 'textResize') {
         els.mainCanvas.style.cursor = hit.cursor;
       } else if (hit?.type === 'image') {
+        els.mainCanvas.style.cursor = 'grab';
+      } else if (hit?.type === 'text') {
         els.mainCanvas.style.cursor = 'grab';
       } else {
         els.mainCanvas.style.cursor = 'default';
@@ -1055,6 +1190,31 @@
           if (valSpan) valSpan.textContent = Math.round(newScale * 100) + '%';
         }
       }
+    } else if (state.dragType === 'textResize') {
+      // Zoom varsa fare konumunu mantıksal alana çevir (startX/startY ile aynı uzay)
+      let lx = x, ly = y;
+      if (state.zoom && state.zoom !== 1) {
+        const cw = els.mainCanvas.width, ch = els.mainCanvas.height;
+        lx = (x - cw / 2) / state.zoom + cw / 2;
+        ly = (y - ch / 2) / state.zoom + ch / 2;
+      }
+      const dx = lx - state.startX;
+      const dy = ly - state.startY;
+      // Çapraz tutamaçlar: dışa sürükleyince büyür (distance > 0)
+      let distance = 0;
+      if (state.resizeHandle === 'br' || state.resizeHandle === 'tl') {
+        distance = (dx + dy) / 2;
+      } else if (state.resizeHandle === 'bl' || state.resizeHandle === 'tr') {
+        distance = (dx - dy) / 2;
+      }
+      const scaleFactor = 1 + (distance / 120);
+      const newScale = clamp(state.startScale * scaleFactor, 0.5, 3.0);
+      state.textScale = newScale;
+      if (els.textSize) {
+        const pct = Math.round(newScale * 100);
+        els.textSize.value = Math.min(300, Math.max(50, pct));
+        if (els.textSizeValue) els.textSizeValue.textContent = pct + '%';
+      }
     }
     
     render();
@@ -1088,8 +1248,8 @@
       els.nextBtn.addEventListener('click', () => {
         console.log('Next/Add button clicked, current step:', state.step);
         if (state.step === 5) {
-          console.log('Step 5, calling addToCart...');
-          addToCart();
+          console.log('Step 5, opening preview...');
+          openPreviewModal();
         } else {
           goToStep(state.step + 1);
         }
@@ -1104,12 +1264,42 @@
       els.addCart.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Add to cart button clicked');
-        addToCart();
+        console.log('Add to cart button clicked - opening preview');
+        openPreviewModal();
       });
     } else {
       console.log('els.addCart not found (this is OK if using nextBtn)');
     }
+    
+    // Önizleme sayfası: kapat, düzenlemeye dön, sepete ekle
+    els.previewBackdrop?.addEventListener('click', closePreviewModal);
+    els.previewClose?.addEventListener('click', closePreviewModal);
+    els.previewBack?.addEventListener('click', closePreviewModal);
+    els.previewAddCart?.addEventListener('click', (e) => {
+      e.preventDefault();
+      addToCart();
+    });
+    els.previewZoomBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openFullscreenPreview();
+    });
+    els.previewFullscreenClose?.addEventListener('click', closeFullscreenPreview);
+    els.previewFullscreenBackdrop?.addEventListener('click', closeFullscreenPreview);
+    els.fsZoomOut?.addEventListener('click', () => {
+      state.fullscreenZoom = Math.max(FULLSCREEN_ZOOM_MIN, state.fullscreenZoom - FULLSCREEN_ZOOM_STEP);
+      applyFullscreenZoom();
+    });
+    els.fsZoomIn?.addEventListener('click', () => {
+      state.fullscreenZoom = Math.min(FULLSCREEN_ZOOM_MAX, state.fullscreenZoom + FULLSCREEN_ZOOM_STEP);
+      applyFullscreenZoom();
+    });
+    els.fsZoomReset?.addEventListener('click', () => {
+      state.fullscreenZoom = 1;
+      applyFullscreenZoom();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && els.previewFullscreen?.classList.contains('show')) closeFullscreenPreview();
+    });
     
     // Shape selection
     els.shapeOptions.forEach(el => {
@@ -1249,6 +1439,13 @@
       render();
     });
     
+    els.textSize?.addEventListener('input', () => {
+      const pct = parseInt(els.textSize.value, 10);
+      state.textScale = pct / 100;
+      if (els.textSizeValue) els.textSizeValue.textContent = pct + '%';
+      render();
+    });
+    
     // Zoom
     document.getElementById('emcZoomOut')?.addEventListener('click', () => {
       state.zoom = clamp(state.zoom - 0.1, 0.5, 2);
@@ -1351,6 +1548,7 @@
       currentUrl.searchParams.set('height', state.height);
       if (state.text) currentUrl.searchParams.set('text', state.text);
       if (state.textColor) currentUrl.searchParams.set('textColor', state.textColor);
+      if (state.textScale !== 1) currentUrl.searchParams.set('textScale', Math.round(state.textScale * 100));
       const designLink = currentUrl.toString();
       
       let message = wa.message || 'Merhaba, paspas tasarımım hakkında bilgi almak istiyorum.';
@@ -1384,6 +1582,61 @@
         console.log('Web Share API desteklenmiyor:', e);
       }
     });
+  }
+
+  // ===== ÖNIZLEME SAYFASI =====
+  function openPreviewModal() {
+    if (!els.previewOverlay) return;
+    state.textSelected = false;
+    state.selectedImageId = null;
+    render();
+    updateSummary();
+    const shapeNames = { horizontal: 'Yatay', vertical: 'Dikey', round: 'Yuvarlak' };
+    function showPreview() {
+      if (els.previewImage) els.previewImage.src = els.mainCanvas.toDataURL('image/jpeg', 0.9);
+      if (els.previewSizeBadge) els.previewSizeBadge.textContent = state.width + ' × ' + state.height + ' cm';
+      if (els.previewShape) els.previewShape.textContent = shapeNames[state.shape] || state.shape;
+      if (els.previewTexture) els.previewTexture.textContent = state.textureName || '—';
+      if (els.previewSize) els.previewSize.textContent = state.width + ' × ' + state.height + ' cm';
+      if (els.previewShipping) els.previewShipping.textContent = state.shippingName || '—';
+      if (els.previewTotal) els.previewTotal.textContent = (els.priceTotal && els.priceTotal.textContent) ? els.priceTotal.textContent : '0 TL';
+      els.previewOverlay.classList.add('show');
+      els.previewOverlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    requestAnimationFrame(() => requestAnimationFrame(showPreview));
+  }
+
+  function closePreviewModal() {
+    if (!els.previewOverlay) return;
+    els.previewOverlay.classList.remove('show');
+    els.previewOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    closeFullscreenPreview();
+  }
+
+  const FULLSCREEN_ZOOM_MIN = 0.5;
+  const FULLSCREEN_ZOOM_MAX = 3;
+  const FULLSCREEN_ZOOM_STEP = 0.25;
+
+  function applyFullscreenZoom() {
+    if (els.previewFullscreenImgWrap) els.previewFullscreenImgWrap.style.transform = 'scale(' + state.fullscreenZoom + ')';
+    if (els.fsZoomValue) els.fsZoomValue.textContent = Math.round(state.fullscreenZoom * 100) + '%';
+  }
+
+  function openFullscreenPreview() {
+    if (!els.previewFullscreen || !els.previewImage?.src) return;
+    if (els.previewFullscreenImage) els.previewFullscreenImage.src = els.previewImage.src;
+    state.fullscreenZoom = 1;
+    applyFullscreenZoom();
+    els.previewFullscreen.classList.add('show');
+    els.previewFullscreen.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeFullscreenPreview() {
+    if (!els.previewFullscreen) return;
+    els.previewFullscreen.classList.remove('show');
+    els.previewFullscreen.setAttribute('aria-hidden', 'true');
   }
 
   // ===== CART =====

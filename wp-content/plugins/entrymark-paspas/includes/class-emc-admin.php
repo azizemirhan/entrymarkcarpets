@@ -25,7 +25,10 @@ class EMC_Admin {
 			'dashicons-grid-view',
 			58
 		);
-		add_submenu_page( 'entrymark-paspas', __( 'Dokular (Yüzey Görselleri)', 'entrymark-paspas' ), __( 'Dokular', 'entrymark-paspas' ), 'manage_options', 'emc-textures', array( __CLASS__, 'page_textures' ) );
+		$textures_hook = add_submenu_page( 'entrymark-paspas', __( 'Dokular (Yüzey Görselleri)', 'entrymark-paspas' ), __( 'Dokular', 'entrymark-paspas' ), 'manage_options', 'emc-textures', array( __CLASS__, 'page_textures' ) );
+		if ( $textures_hook ) {
+			add_action( 'load-' . $textures_hook, array( __CLASS__, 'handle_textures_redirects' ) );
+		}
 		add_submenu_page( 'entrymark-paspas', __( 'Ölçüler', 'entrymark-paspas' ), __( 'Ölçüler', 'entrymark-paspas' ), 'manage_options', 'emc-sizes', array( __CLASS__, 'page_sizes' ) );
 		add_submenu_page( 'entrymark-paspas', __( 'Fiyatlandırma & Gönderim', 'entrymark-paspas' ), __( 'Fiyat & Gönderim', 'entrymark-paspas' ), 'manage_options', 'emc-pricing', array( __CLASS__, 'page_pricing' ) );
 		add_submenu_page( 'entrymark-paspas', __( 'Sepet Sayfası', 'entrymark-paspas' ), __( 'Sepet Sayfası', 'entrymark-paspas' ), 'manage_options', 'emc-cart-page', array( __CLASS__, 'page_cart_settings' ) );
@@ -156,14 +159,65 @@ class EMC_Admin {
 		<?php
 	}
 
+	/**
+	 * Dokular sayfasında silme/sıra işlemlerini header gönderilmeden önce yapıp yönlendirir (headers already sent hatasını önler).
+	 */
+	public static function handle_textures_redirects() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		// Silme
+		if ( isset( $_GET['emc_delete_texture'] ) ) {
+			$del = sanitize_text_field( wp_unslash( $_GET['emc_delete_texture'] ) );
+			$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+			if ( $del && wp_verify_nonce( $nonce, 'emc_delete_texture_' . $del ) ) {
+				$textures = get_option( 'emc_textures', array() );
+				if ( ! is_array( $textures ) ) {
+					$textures = array();
+				}
+				$textures = array_values( array_filter( $textures, function( $t ) use ( $del ) {
+					return ( isset( $t['id'] ) && $t['id'] !== $del );
+				} ) );
+				update_option( 'emc_textures', $textures );
+				wp_safe_redirect( admin_url( 'admin.php?page=emc-textures' ) );
+				exit;
+			}
+		}
+		// Yukarı/Aşağı sıra
+		if ( isset( $_GET['emc_texture_move'] ) && isset( $_GET['emc_texture_id'] ) ) {
+			$tid = sanitize_text_field( wp_unslash( $_GET['emc_texture_id'] ) );
+			if ( $tid && wp_verify_nonce( isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '', 'emc_texture_move_' . $tid ) ) {
+				$textures = get_option( 'emc_textures', array() );
+				if ( is_array( $textures ) ) {
+					$move = $_GET['emc_texture_move'] === 'up' ? -1 : 1;
+					$idx  = -1;
+					foreach ( $textures as $i => $t ) {
+						if ( isset( $t['id'] ) && $t['id'] === $tid ) { $idx = $i; break; }
+					}
+					if ( $idx >= 0 ) {
+						$new_idx = $idx + $move;
+						if ( $new_idx >= 0 && $new_idx < count( $textures ) ) {
+							$tmp = $textures[ $idx ];
+							$textures[ $idx ] = $textures[ $new_idx ];
+							$textures[ $new_idx ] = $tmp;
+							update_option( 'emc_textures', $textures );
+						}
+					}
+				}
+				wp_safe_redirect( admin_url( 'admin.php?page=emc-textures' ) );
+				exit;
+			}
+		}
+	}
+
 	/** Dokular: yüzey görselleri listesi + ekle/düzenle */
 	public static function page_textures() {
 		$textures = get_option( 'emc_textures', array() );
 		if ( ! is_array( $textures ) ) $textures = array();
 
 		if ( isset( $_POST['emc_texture_save'] ) && current_user_can( 'manage_options' ) && check_admin_referer( 'emc_textures' ) ) {
-			$id    = isset( $_POST['emc_texture_id'] ) ? sanitize_text_field( $_POST['emc_texture_id'] ) : '';
-			$name  = isset( $_POST['emc_texture_name'] ) ? sanitize_text_field( $_POST['emc_texture_name'] ) : '';
+			$id    = isset( $_POST['emc_texture_id'] ) ? sanitize_text_field( wp_unslash( $_POST['emc_texture_id'] ) ) : '';
+			$name  = isset( $_POST['emc_texture_name'] ) ? sanitize_text_field( wp_unslash( $_POST['emc_texture_name'] ) ) : '';
 			$img_id = isset( $_POST['emc_texture_image_id'] ) ? absint( $_POST['emc_texture_image_id'] ) : 0;
 			if ( $name && $img_id ) {
 				if ( $id ) {
@@ -180,32 +234,6 @@ class EMC_Admin {
 				echo '<div class="notice notice-success"><p>' . esc_html__( 'Doku kaydedildi.', 'entrymark-paspas' ) . '</p></div>';
 			}
 			$textures = get_option( 'emc_textures', array() );
-		}
-		if ( isset( $_GET['emc_delete_texture'] ) && current_user_can( 'manage_options' ) && check_admin_referer( 'emc_delete_texture_' . $_GET['emc_delete_texture'] ) ) {
-			$del = sanitize_text_field( $_GET['emc_delete_texture'] );
-			$textures = array_values( array_filter( $textures, function( $t ) use ( $del ) { return ( isset( $t['id'] ) && $t['id'] !== $del ); } ) );
-			update_option( 'emc_textures', $textures );
-			wp_safe_redirect( remove_query_arg( array( 'emc_delete_texture', '_wpnonce' ) ) );
-			exit;
-		}
-		if ( isset( $_GET['emc_texture_move'] ) && isset( $_GET['emc_texture_id'] ) && current_user_can( 'manage_options' ) && check_admin_referer( 'emc_texture_move_' . $_GET['emc_texture_id'] ) ) {
-			$move = $_GET['emc_texture_move'] === 'up' ? -1 : 1;
-			$tid  = sanitize_text_field( $_GET['emc_texture_id'] );
-			$idx  = -1;
-			foreach ( $textures as $i => $t ) {
-				if ( isset( $t['id'] ) && $t['id'] === $tid ) { $idx = $i; break; }
-			}
-			if ( $idx >= 0 ) {
-				$new_idx = $idx + $move;
-				if ( $new_idx >= 0 && $new_idx < count( $textures ) ) {
-					$tmp = $textures[ $idx ];
-					$textures[ $idx ] = $textures[ $new_idx ];
-					$textures[ $new_idx ] = $tmp;
-					update_option( 'emc_textures', $textures );
-				}
-			}
-			wp_safe_redirect( remove_query_arg( array( 'emc_texture_move', 'emc_texture_id', '_wpnonce' ) ) );
-			exit;
 		}
 		?>
 		<div class="wrap emc-admin">
@@ -252,7 +280,7 @@ class EMC_Admin {
 							<td><?php echo esc_html( isset( $t['name'] ) ? $t['name'] : '' ); ?></td>
 							<td>
 								<a href="#" class="emc-edit-texture" data-id="<?php echo esc_attr( $tid ); ?>" data-name="<?php echo esc_attr( isset( $t['name'] ) ? $t['name'] : '' ); ?>" data-image-id="<?php echo esc_attr( $img_id ); ?>"><?php esc_html_e( 'Düzenle', 'entrymark-paspas' ); ?></a>
-								| <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'emc_delete_texture', $tid ), 'emc_delete_texture_' . $tid ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Bu dokuyu silmek istediğinize emin misiniz?', 'entrymark-paspas' ); ?>');"><?php esc_html_e( 'Sil', 'entrymark-paspas' ); ?></a>
+								| <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'emc-textures', 'emc_delete_texture' => $tid ), admin_url( 'admin.php' ) ), 'emc_delete_texture_' . $tid ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Bu dokuyu silmek istediğinize emin misiniz?', 'entrymark-paspas' ); ?>');"><?php esc_html_e( 'Sil', 'entrymark-paspas' ); ?></a>
 							</td>
 						</tr>
 					<?php endforeach; ?>

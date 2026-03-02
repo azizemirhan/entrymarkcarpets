@@ -253,62 +253,60 @@ class EMC_REST {
 
 	/**
 	 * Dokular: admin'den yüklenen yüzey görselleri (id, name, image_url).
+	 * Sitede Paspas → Dokular'da tanımlı tüm dokular döner; frontend özelleştiricide gerçek dokular olarak kullanılır.
 	 */
 	private static function get_textures() {
 		$raw = get_option( 'emc_textures', array() );
-		
-		// Debug: Log raw data
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'EMC Textures raw: ' . print_r( $raw, true ) );
-		}
-		
 		if ( ! is_array( $raw ) || empty( $raw ) ) {
 			return array();
 		}
-		
-		$out = array();
+
+		$home = home_url( '/' );
+		$out  = array();
 		foreach ( $raw as $i => $t ) {
-			if ( ! is_array( $t ) ) continue;
-			
+			if ( ! is_array( $t ) ) {
+				continue;
+			}
 			$img_id = isset( $t['image_id'] ) ? (int) $t['image_id'] : 0;
 			$url    = '';
-			
-			// Try to get image URL from attachment
+
 			if ( $img_id > 0 ) {
-				$attach_url = wp_get_attachment_image_url( $img_id, 'medium' );
+				// Önce full (canvas desen kalitesi), yoksa medium, sonra doğrudan URL
+				$attach_url = wp_get_attachment_image_url( $img_id, 'full' );
+				if ( empty( $attach_url ) ) {
+					$attach_url = wp_get_attachment_image_url( $img_id, 'medium_large' );
+				}
+				if ( empty( $attach_url ) ) {
+					$attach_url = wp_get_attachment_image_url( $img_id, 'medium' );
+				}
+				if ( empty( $attach_url ) ) {
+					$attach_url = wp_get_attachment_url( $img_id );
+				}
 				if ( $attach_url ) {
 					$url = $attach_url;
 				}
 			}
-			
-			// Fallback to stored image_url
 			if ( empty( $url ) && ! empty( $t['image_url'] ) ) {
 				$url = $t['image_url'];
 			}
-			
-			// Sunucu taşındıysa veya farklı domain'den açılıyorsa: URL'yi mevcut site adresiyle mutlak yap
+			// Mutlak URL: taşınan sitede path aynı kalır, domain mevcut site ile değişir
 			if ( ! empty( $url ) ) {
 				$parsed = wp_parse_url( $url );
 				if ( ! empty( $parsed['path'] ) ) {
-					$url = home_url( $parsed['path'] . ( isset( $parsed['query'] ) ? '?' . $parsed['query'] : '' ) );
+					$path  = $parsed['path'] . ( isset( $parsed['query'] ) ? '?' . $parsed['query'] : '' );
+					$url   = rtrim( $home, '/' ) . $path;
 				}
+				$url = esc_url_raw( $url );
 			}
-			
-			$id = isset( $t['id'] ) ? $t['id'] : 't-' . $i;
-			$name = isset( $t['name'] ) ? $t['name'] : 'Doku ' . ($i + 1);
-			
+
+			$id   = isset( $t['id'] ) ? $t['id'] : 't-' . ( $i + 1 );
+			$name = isset( $t['name'] ) ? $t['name'] : ( 'Doku ' . ( $i + 1 ) );
 			$out[] = array(
 				'id'        => $id,
 				'name'      => $name,
 				'image_url' => $url ?: '',
 			);
 		}
-		
-		// Debug: Log output
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'EMC Textures output: ' . count( $out ) . ' items' );
-		}
-		
 		return $out;
 	}
 
@@ -356,9 +354,17 @@ class EMC_REST {
 
 	/**
 	 * GET /cart — sepet öğeleri ve sayı.
+	 * Cookie ile cart_id alınır; cookie gitmezse X-EMC-Cart-ID header'ı (ödeme sayfasından iletilen) kullanılır.
 	 */
 	public static function cart_get( \WP_REST_Request $request ) {
-		$items = EMC_Cart::get_items();
+		$cart_id = EMC_Cart::get_cart_id();
+		if ( ! $cart_id ) {
+			$header = $request->get_header( 'X-EMC-Cart-ID' );
+			if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{20,64}$/', $header ) ) {
+				$cart_id = sanitize_text_field( $header );
+			}
+		}
+		$items = EMC_Cart::get_items( $cart_id );
 		return rest_ensure_response( array(
 			'items' => $items,
 			'count' => count( $items ),
@@ -596,7 +602,15 @@ class EMC_REST {
 		if ( ! is_array( $customer ) ) {
 			return new \WP_REST_Response( array( 'success' => false, 'message' => __( 'Müşteri bilgisi gerekli.', 'entrymark-paspas' ) ), 400 );
 		}
-		$order_id = EMC_Checkout::create_order_from_cart( $customer );
+		$cart_id = null;
+		$header  = $request->get_header( 'X-EMC-Cart-ID' );
+		if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{20,64}$/', $header ) ) {
+			$cart_id = sanitize_text_field( $header );
+		}
+		if ( ! $cart_id ) {
+			$cart_id = EMC_Cart::get_cart_id();
+		}
+		$order_id = EMC_Checkout::create_order_from_cart( $customer, $cart_id ?: null );
 		if ( is_wp_error( $order_id ) ) {
 			return new \WP_REST_Response( array(
 				'success' => false,
@@ -623,20 +637,57 @@ class EMC_REST {
 			return $saved;
 		}
 		return array(
+			// Sistem fontları
 			array( 'name' => 'Arial', 'family' => 'Arial, sans-serif' ),
 			array( 'name' => 'Georgia', 'family' => 'Georgia, serif' ),
 			array( 'name' => 'Times New Roman', 'family' => '"Times New Roman", serif' ),
 			array( 'name' => 'Verdana', 'family' => 'Verdana, sans-serif' ),
+			array( 'name' => 'Courier New', 'family' => '"Courier New", monospace' ),
+			// Klasik & dekoratif (italic destekli serif)
 			array( 'name' => 'Playfair Display', 'family' => '"Playfair Display", serif' ),
+			array( 'name' => 'Lora', 'family' => '"Lora", serif' ),
+			array( 'name' => 'Crimson Text', 'family' => '"Crimson Text", serif' ),
 			array( 'name' => 'Outfit', 'family' => '"Outfit", sans-serif' ),
 			array( 'name' => 'Cormorant Garamond', 'family' => '"Cormorant Garamond", serif' ),
-			array( 'name' => 'Courier New', 'family' => '"Courier New", monospace' ),
 			array( 'name' => 'Lato', 'family' => '"Lato", sans-serif' ),
 			array( 'name' => 'Open Sans', 'family' => '"Open Sans", sans-serif' ),
 			array( 'name' => 'Montserrat', 'family' => '"Montserrat", sans-serif' ),
 			array( 'name' => 'Poppins', 'family' => '"Poppins", sans-serif' ),
 			array( 'name' => 'Roboto', 'family' => '"Roboto", sans-serif' ),
 			array( 'name' => 'Source Sans 3', 'family' => '"Source Sans 3", sans-serif' ),
+			// El yazısı & script
+			array( 'name' => 'Dancing Script', 'family' => '"Dancing Script", cursive' ),
+			array( 'name' => 'Pacifico', 'family' => '"Pacifico", cursive' ),
+			array( 'name' => 'Great Vibes', 'family' => '"Great Vibes", cursive' ),
+			array( 'name' => 'Caveat', 'family' => '"Caveat", cursive' ),
+			array( 'name' => 'Satisfy', 'family' => '"Satisfy", cursive' ),
+			array( 'name' => 'Cookie', 'family' => '"Cookie", cursive' ),
+			array( 'name' => 'Kalam', 'family' => '"Kalam", cursive' ),
+			array( 'name' => 'Amatic SC', 'family' => '"Amatic SC", cursive' ),
+			array( 'name' => 'Indie Flower', 'family' => '"Indie Flower", cursive' ),
+			array( 'name' => 'Sacramento', 'family' => '"Sacramento", cursive' ),
+			array( 'name' => 'Patrick Hand', 'family' => '"Patrick Hand", cursive' ),
+			array( 'name' => 'Gloria Hallelujah', 'family' => '"Gloria Hallelujah", cursive' ),
+			array( 'name' => 'Caveat Brush', 'family' => '"Caveat Brush", cursive' ),
+			array( 'name' => 'Permanent Marker', 'family' => '"Permanent Marker", cursive' ),
+			array( 'name' => 'Handlee', 'family' => '"Handlee", cursive' ),
+			// Ek el yazısı & script fontları
+			array( 'name' => 'Allura', 'family' => '"Allura", cursive' ),
+			array( 'name' => 'Mr Dafoe', 'family' => '"Mr Dafoe", cursive' ),
+			array( 'name' => 'Marck Script', 'family' => '"Marck Script", cursive' ),
+			array( 'name' => 'Shadows Into Light', 'family' => '"Shadows Into Light", cursive' ),
+			array( 'name' => 'Nothing You Could Do', 'family' => '"Nothing You Could Do", cursive' ),
+			array( 'name' => 'Architects Daughter', 'family' => '"Architects Daughter", cursive' ),
+			array( 'name' => 'Covered By Your Grace', 'family' => '"Covered By Your Grace", cursive' ),
+			array( 'name' => 'Courgette', 'family' => '"Courgette", cursive' ),
+			array( 'name' => 'Yellowtail', 'family' => '"Yellowtail", cursive' ),
+			array( 'name' => 'Bad Script', 'family' => '"Bad Script", cursive' ),
+			array( 'name' => 'Lobster Two', 'family' => '"Lobster Two", cursive' ),
+			array( 'name' => 'Sriracha', 'family' => '"Sriracha", cursive' ),
+			array( 'name' => 'Neucha', 'family' => '"Neucha", cursive' ),
+			array( 'name' => 'Coming Soon', 'family' => '"Coming Soon", cursive' ),
+			array( 'name' => 'Reenie Beanie', 'family' => '"Reenie Beanie", cursive' ),
+			array( 'name' => 'Rock Salt', 'family' => '"Rock Salt", cursive' ),
 		);
 	}
 }

@@ -1,44 +1,67 @@
 (function () {
   'use strict';
 
-  var customizerUrl = (window.nextcoreGallery && window.nextcoreGallery.customizerUrl) || '';
+  var cfg = window.nextcoreGallery || {};
+  var customizerUrl = cfg.customizerUrl || '';
+  var INITIAL_COUNT = Math.max(1, parseInt(cfg.initialCount, 10) || 8);
+  var loadMoreText = cfg.loadMoreText || 'Daha Fazla Göster';
+  var counterFormat = cfg.counterFormat || '%shown% / %total% ürün gösteriliyor';
+  var tagByCategory = cfg.tagByCategory || { hotel: 'OTEL KOLEKSİYONU', office: 'OFİS KOLEKSİYONU', custom: 'ÖZEL TASARIM', residential: 'KONUT KOLEKSİYONU' };
+  var tagDefault = cfg.tagDefault || 'KOLEKSİYON';
+  var badgeLabels = { new: cfg.badgeNew || 'Yeni', popular: cfg.badgePopular || 'Popüler', sale: cfg.badgeSale || 'İndirim' };
 
-  var items = [
-    { id: 1, title: 'Aegean Luxe Ocean', collection: 'Aegean Luxe Series', category: 'hotel', color: '#1B4F8A', colors: ['#1B4F8A', '#0D47A1', '#2D3748'], material: 'Yün Karışım', size: '200 × 300 cm', thickness: '14mm', price: '₺4.250', desc: 'Akdeniz kıyılarının derinliklerinden ilham alan, otel lobileri için tasarlanmış lüks halı. Dayanıklı yün karışım dokusu ile uzun ömürlü performans sunar.', badge: 'new', layout: 'featured', bg: 'linear-gradient(135deg,#16354d,#1B4F8A,#2a6ab0)' },
-    { id: 2, title: 'Urban Slate Charcoal', collection: 'Urban Slate', category: 'office', color: '#4a4a4a', colors: ['#4a4a4a', '#2D2D2D', '#696969'], material: 'Naylon', size: '100 × 150 cm', thickness: '10mm', price: '₺1.890', desc: 'Minimalist ofis alanları için tasarlanmış, yüksek trafik dayanımlı kurumsal halı. Leke tutmaz özel kaplama.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#3a3a3a,#555,#6a6a6a)' },
-    { id: 3, title: 'Anatolian Heritage Gold', collection: 'Anatolian Heritage', category: 'residential', color: '#C4A265', colors: ['#C4A265', '#8B7355', '#DDA944'], material: '%100 Yün', size: '160 × 230 cm', thickness: '16mm', price: '₺5.670', desc: 'Anadolu motiflerinden ilham alan, geleneksel dokuları modern çizgilerle buluşturan el yapımı koleksiyon.', badge: 'popular', layout: 'tall', bg: 'linear-gradient(135deg,#8a7040,#C4A265,#dbb870)' },
-    { id: 4, title: 'Nordic Frost White', collection: 'Nordic Frost', category: 'residential', color: '#C0C0C0', colors: ['#C0C0C0', '#E8E8E8', '#A9A9A9'], material: 'Polipropilen', size: '120 × 170 cm', thickness: '8mm', price: '₺1.340', desc: 'İskandinav tasarım felsefesiyle üretilen, sade ve şık konut halısı. Kolay bakım ve temizlik.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#a0a0a0,#c8c8c8,#e0e0e0)' },
-    { id: 5, title: 'Forest Emerald', collection: 'Nature Collection', category: 'hotel', color: '#2E5A1C', colors: ['#2E5A1C', '#355E3B', '#556B2F'], material: 'Yün Karışım', size: '250 × 350 cm', thickness: '14mm', price: '₺7.890', desc: 'Doğanın yeşilinden esinlenen, butik oteller ve spa alanları için ideal premium halı.', badge: null, layout: 'wide', bg: 'linear-gradient(135deg,#1e3d12,#2E5A1C,#4a7a30)' },
-    { id: 6, title: 'Royal Bordo', collection: 'Classic Elegance', category: 'hotel', color: '#800020', colors: ['#800020', '#5C0015', '#A0002A'], material: 'İpek Dokunuş', size: '200 × 300 cm', thickness: '18mm', price: '₺9.450', desc: 'Kraliyet saraylarından ilham alan, 5 yıldızlı otel süitleri için tasarlanmış ultra lüks koleksiyon.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#4a0012,#800020,#a02040)' },
-    { id: 7, title: 'Custom Logo Mat Pro', collection: 'Designer Lab', category: 'custom', color: '#1a1a1e', colors: ['#1a1a1e', '#4a4a4a', '#1B4F8A'], material: 'Polipropilen', size: 'Özel Ölçü', thickness: '12mm', price: "₺573'den", desc: "Markanızın kimliğini yansıtan, logolu özel tasarım paspas. Kurumsal girişler ve showroomlar için ideal.", badge: null, layout: 'tall', bg: 'linear-gradient(135deg,#111115,#1a1a1e,#2a2a30)' },
-    { id: 8, title: 'Petrol Harmony', collection: 'Modern Collection', category: 'office', color: '#008B8B', colors: ['#008B8B', '#006060', '#40E0D0'], material: 'Naylon Karışım', size: '150 × 200 cm', thickness: '10mm', price: '₺2.780', desc: 'Modern ofis alanlarına enerji katan, canlı petrol rengi kurumsal halı. Akustik yalıtım özellikli.', badge: 'new', layout: 'normal', bg: 'linear-gradient(135deg,#005858,#008B8B,#20b0b0)' },
-    { id: 9, title: 'Sunrise Orange', collection: 'Vibrant Series', category: 'custom', color: '#FF8C00', colors: ['#FF8C00', '#f5a524', '#DDA944'], material: 'Polipropilen', size: 'Özel Ölçü', thickness: '10mm', price: "₺680'den", desc: 'Enerjik ve dikkat çekici turuncu tonlarıyla, mağaza girişleri ve showroomlar için tasarlanmış logo paspas.', badge: 'sale', layout: 'normal', bg: 'linear-gradient(135deg,#c06800,#FF8C00,#ffaa30)' },
-    { id: 10, title: 'Midnight Navy', collection: 'Executive Line', category: 'office', color: '#0D47A1', colors: ['#0D47A1', '#1B4F8A', '#2D3748'], material: 'Yün Karışım', size: '200 × 250 cm', thickness: '14mm', price: '₺4.890', desc: 'Yönetici ofisleri ve toplantı salonları için tasarlanmış, sofistike lacivert premium halı.', badge: null, layout: 'wide', bg: 'linear-gradient(135deg,#08285a,#0D47A1,#2060c0)' },
-    { id: 11, title: 'Sahara Beige', collection: 'Nature Collection', category: 'residential', color: '#C4A265', colors: ['#C4A265', '#D2B48C', '#DDA944'], material: '%100 Yün', size: '140 × 200 cm', thickness: '16mm', price: '₺3.450', desc: 'Çöl kumlarının sıcak tonlarını yaşam alanlarınıza taşıyan, doğal yün halı. Alerjiye karşı güvenli.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#a08040,#c4a265,#dcc090)' },
-    { id: 12, title: 'Custom Round Designer', collection: 'Designer Lab', category: 'custom', color: '#CC3366', colors: ['#CC3366', '#DA70D6', '#800020'], material: 'İpek Dokunuş', size: 'Ø 150 cm', thickness: '12mm', price: '₺2.150', desc: 'Yuvarlak formda, tamamen kişiselleştirilebilir tasarım paspas. Butik mağazalar ve lobiler için.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#8a1a40,#CC3366,#e05080)' }
+  function getTagLabel(cat) {
+    return tagByCategory[cat] || tagDefault;
+  }
+
+  function getBadgeLabel(badge) {
+    return badgeLabels[badge] || '';
+  }
+
+  var defaultItems = [
+    { id: 1, title: 'Aegean Luxe Ocean', collection: 'Aegean Luxe Series', category: 'hotel', color: '#1B4F8A', colors: ['#1B4F8A', '#0D47A1', '#2D3748'], material: 'Yün Karışım', size: '200 × 300 cm', thickness: '14mm', price: '₺4.250', desc: 'Akdeniz kıyılarının derinliklerinden ilham alan, otel lobileri için tasarlanmış lüks halı.', badge: 'new', layout: 'featured', bg: 'linear-gradient(135deg,#16354d,#1B4F8A,#2a6ab0)' },
+    { id: 2, title: 'Urban Slate Charcoal', collection: 'Urban Slate', category: 'office', color: '#4a4a4a', colors: ['#4a4a4a', '#2D2D2D', '#696969'], material: 'Naylon', size: '100 × 150 cm', thickness: '10mm', price: '₺1.890', desc: 'Minimalist ofis alanları için tasarlanmış kurumsal halı.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#3a3a3a,#555,#6a6a6a)' },
+    { id: 3, title: 'Anatolian Heritage Gold', collection: 'Anatolian Heritage', category: 'residential', color: '#C4A265', colors: ['#C4A265', '#8B7355', '#DDA944'], material: '%100 Yün', size: '160 × 230 cm', thickness: '16mm', price: '₺5.670', desc: 'Anadolu motiflerinden ilham alan el yapımı koleksiyon.', badge: 'popular', layout: 'tall', bg: 'linear-gradient(135deg,#8a7040,#C4A265,#dbb870)' },
+    { id: 4, title: 'Nordic Frost White', collection: 'Nordic Frost', category: 'residential', color: '#C0C0C0', colors: ['#C0C0C0', '#E8E8E8', '#A9A9A9'], material: 'Polipropilen', size: '120 × 170 cm', thickness: '8mm', price: '₺1.340', desc: 'İskandinav tasarım felsefesiyle üretilen konut halısı.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#a0a0a0,#c8c8c8,#e0e0e0)' },
+    { id: 5, title: 'Forest Emerald', collection: 'Nature Collection', category: 'hotel', color: '#2E5A1C', colors: ['#2E5A1C', '#355E3B', '#556B2F'], material: 'Yün Karışım', size: '250 × 350 cm', thickness: '14mm', price: '₺7.890', desc: 'Doğanın yeşilinden esinlenen premium halı.', badge: null, layout: 'wide', bg: 'linear-gradient(135deg,#1e3d12,#2E5A1C,#4a7a30)' },
+    { id: 6, title: 'Royal Bordo', collection: 'Classic Elegance', category: 'hotel', color: '#800020', colors: ['#800020', '#5C0015', '#A0002A'], material: 'İpek Dokunuş', size: '200 × 300 cm', thickness: '18mm', price: '₺9.450', desc: '5 yıldızlı otel süitleri için ultra lüks koleksiyon.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#4a0012,#800020,#a02040)' },
+    { id: 7, title: 'Custom Logo Mat Pro', collection: 'Designer Lab', category: 'custom', color: '#1a1a1e', colors: ['#1a1a1e', '#4a4a4a', '#1B4F8A'], material: 'Polipropilen', size: 'Özel Ölçü', thickness: '12mm', price: "₺573'den", desc: 'Logolu özel tasarım paspas.', badge: null, layout: 'tall', bg: 'linear-gradient(135deg,#111115,#1a1a1e,#2a2a30)' },
+    { id: 8, title: 'Petrol Harmony', collection: 'Modern Collection', category: 'office', color: '#008B8B', colors: ['#008B8B', '#006060', '#40E0D0'], material: 'Naylon Karışım', size: '150 × 200 cm', thickness: '10mm', price: '₺2.780', desc: 'Modern ofis alanlarına enerji katan kurumsal halı.', badge: 'new', layout: 'normal', bg: 'linear-gradient(135deg,#005858,#008B8B,#20b0b0)' },
+    { id: 9, title: 'Sunrise Orange', collection: 'Vibrant Series', category: 'custom', color: '#FF8C00', colors: ['#FF8C00', '#f5a524', '#DDA944'], material: 'Polipropilen', size: 'Özel Ölçü', thickness: '10mm', price: "₺680'den", desc: 'Mağaza girişleri için logo paspas.', badge: 'sale', layout: 'normal', bg: 'linear-gradient(135deg,#c06800,#FF8C00,#ffaa30)' },
+    { id: 10, title: 'Midnight Navy', collection: 'Executive Line', category: 'office', color: '#0D47A1', colors: ['#0D47A1', '#1B4F8A', '#2D3748'], material: 'Yün Karışım', size: '200 × 250 cm', thickness: '14mm', price: '₺4.890', desc: 'Yönetici ofisleri için sofistike lacivert halı.', badge: null, layout: 'wide', bg: 'linear-gradient(135deg,#08285a,#0D47A1,#2060c0)' },
+    { id: 11, title: 'Sahara Beige', collection: 'Nature Collection', category: 'residential', color: '#C4A265', colors: ['#C4A265', '#D2B48C', '#DDA944'], material: '%100 Yün', size: '140 × 200 cm', thickness: '16mm', price: '₺3.450', desc: 'Doğal yün halı.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#a08040,#c4a265,#dcc090)' },
+    { id: 12, title: 'Custom Round Designer', collection: 'Designer Lab', category: 'custom', color: '#CC3366', colors: ['#CC3366', '#DA70D6', '#800020'], material: 'İpek Dokunuş', size: 'Ø 150 cm', thickness: '12mm', price: '₺2.150', desc: 'Yuvarlak formda tasarım paspas.', badge: null, layout: 'normal', bg: 'linear-gradient(135deg,#8a1a40,#CC3366,#e05080)' }
   ];
 
-  var INITIAL_COUNT = 8;
+  var items = (cfg.items && Array.isArray(cfg.items) && cfg.items.length > 0) ? cfg.items : defaultItems;
+  items = items.map(function (it, idx) {
+    var id = it.id != null ? it.id : idx + 1;
+    var color = it.color || '#2D3748';
+    var colors = Array.isArray(it.colors) ? it.colors : [color];
+    var bg = it.bg || ('linear-gradient(135deg,' + color + ',' + color + ')');
+    return {
+      id: id,
+      title: it.title || '',
+      collection: it.collection || '',
+      category: it.category || 'custom',
+      color: color,
+      colors: colors,
+      material: it.material || '',
+      size: it.size || '',
+      thickness: it.thickness || '',
+      price: it.price || '',
+      desc: it.desc || '',
+      badge: it.badge || null,
+      layout: it.layout || 'normal',
+      bg: bg
+    };
+  });
+
   var currentFilter = 'all';
   var showAll = false;
 
   var grid = document.getElementById('galleryGrid');
   if (!grid) return;
-
-  function getTagLabel(cat) {
-    if (cat === 'hotel') return 'OTEL KOLEKSİYONU';
-    if (cat === 'office') return 'OFİS KOLEKSİYONU';
-    if (cat === 'custom') return 'ÖZEL TASARIM';
-    if (cat === 'residential') return 'KONUT KOLEKSİYONU';
-    return 'KOLEKSİYON';
-  }
-
-  function getBadgeLabel(badge) {
-    if (badge === 'new') return 'Yeni';
-    if (badge === 'popular') return 'Popüler';
-    if (badge === 'sale') return 'İndirim';
-    return '';
-  }
 
   function createCard(item) {
     var card = document.createElement('div');
@@ -73,7 +96,7 @@
         '<div class="card-overlay-actions">' +
           (customizerUrl ? '<a href="' + customizerUrl + '" class="card-action-btn primary-action">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
-            'Özelleştir</a>' : '') +
+            (cfg.btnCustomize || 'Özelleştir') + '</a>' : '') +
           '<button type="button" class="card-action-btn" data-action="view" title="Detay">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
           '</button>' +
@@ -114,12 +137,24 @@
       });
     });
 
-    var shownEl = document.getElementById('shownCount');
-    var totalEl = document.getElementById('totalCount');
+    var counterWrap = document.getElementById('galleryCounterWrap');
+    var counterTextEl = document.getElementById('galleryCounterText');
+    if (counterTextEl && counterFormat) {
+      counterTextEl.textContent = counterFormat.replace(/%shown%/g, visible.length).replace(/%total%/g, filtered.length);
+    }
     var loadBtn = document.getElementById('loadMoreBtn');
-    if (shownEl) shownEl.textContent = visible.length;
-    if (totalEl) totalEl.textContent = filtered.length;
     if (loadBtn) loadBtn.style.display = visible.length >= filtered.length ? 'none' : '';
+
+    // Filtre butonlarındaki sayıları güncelle
+    var filterBar = document.getElementById('filterBar');
+    if (filterBar) {
+      filterBar.querySelectorAll('.filter-btn').forEach(function (btn) {
+        var slug = btn.dataset.filter;
+        var count = slug === 'all' ? items.length : items.filter(function (i) { return i.category === slug; }).length;
+        var span = btn.querySelector('.filter-count');
+        if (span) span.textContent = count;
+      });
+    }
   }
 
   document.querySelectorAll('.filter-btn').forEach(function (btn) {

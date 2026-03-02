@@ -17,6 +17,38 @@ class EMC_Frontend {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_for_checkout' ), 20 );
 		add_filter( 'body_class', array( __CLASS__, 'body_class_customizer_page' ) );
 		add_filter( 'the_title', array( __CLASS__, 'hide_title_on_customizer_page' ), 10, 2 );
+		add_filter( 'the_content', array( __CLASS__, 'inject_checkout_on_odeme_page' ), 5 );
+	}
+
+	/**
+	 * Mevcut sayfa ödeme sayfası mı? (slug odeme veya atanmış checkout sayfası)
+	 */
+	private static function is_checkout_page() {
+		global $post;
+		if ( ! $post || ! is_singular( 'page' ) ) {
+			return false;
+		}
+		$checkout_page_id = (int) get_option( 'emc_checkout_page_id', 0 );
+		if ( $checkout_page_id && (int) $post->ID === $checkout_page_id ) {
+			return true;
+		}
+		if ( $post->post_name === 'odeme' || $post->post_name === 'checkout' ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Ödeme sayfasında (slug: odeme) shortcode yoksa checkout formunu göster.
+	 */
+	public static function inject_checkout_on_odeme_page( $content ) {
+		if ( ! self::is_checkout_page() ) {
+			return $content;
+		}
+		if ( has_shortcode( $content, 'entrymark_paspas_checkout' ) ) {
+			return $content;
+		}
+		return do_shortcode( '[entrymark_paspas_checkout]' );
 	}
 
 	/**
@@ -26,6 +58,9 @@ class EMC_Frontend {
 		global $post;
 		if ( $post && is_singular() && has_shortcode( $post->post_content, 'entrymark_paspas_customizer' ) ) {
 			$classes[] = 'emc-customizer-page';
+		}
+		if ( self::is_checkout_page() ) {
+			$classes[] = 'emc-checkout-page';
 		}
 		return $classes;
 	}
@@ -47,6 +82,10 @@ class EMC_Frontend {
 		}
 		// Sepet sayfası (shortcode veya slug ile)
 		if ( has_shortcode( $post->post_content, 'entrymark_paspas_cart' ) || $post->post_name === 'sepet' ) {
+			return '';
+		}
+		// Ödeme sayfası (shortcode veya slug ile)
+		if ( has_shortcode( $post->post_content, 'entrymark_paspas_checkout' ) || self::is_checkout_page() ) {
 			return '';
 		}
 		return $title;
@@ -74,7 +113,8 @@ class EMC_Frontend {
 
 	private static function maybe_inject_checkout_data() {
 		global $post;
-		if ( ! $post || ! has_shortcode( $post->post_content, 'entrymark_paspas_checkout' ) ) {
+		$has_shortcode = $post && has_shortcode( $post->post_content, 'entrymark_paspas_checkout' );
+		if ( ! $has_shortcode && ! self::is_checkout_page() ) {
 			return;
 		}
 		wp_enqueue_script(
@@ -84,9 +124,12 @@ class EMC_Frontend {
 			EMC_VERSION,
 			true
 		);
+		// Sayfa yüklenirken cookie ile alınan cart_id'yi JS'e ver; fetch cookie göndermese bile sepete erişilebilsin.
+		$cart_id = class_exists( 'EMC_Cart' ) ? EMC_Cart::get_cart_id() : '';
 		wp_localize_script( 'emc-checkout-config', 'EMC_REST_DATA', array(
 			'rest_url' => rest_url( 'entrymark-paspas/v1' ),
 			'nonce'    => wp_create_nonce( 'emc_cart' ),
+			'cart_id'  => $cart_id ?: '',
 		) );
 	}
 
@@ -131,14 +174,19 @@ class EMC_Frontend {
 			EMC_VERSION,
 			true
 		);
-		wp_enqueue_style( 'emc-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap', array(), null );
+		// Fontlar: base (italic destekli serif), el yazısı 1 ve 2 (URL uzunluğu için ayrı)
+		wp_enqueue_style( 'emc-fonts-base', 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap', array(), null );
+		wp_enqueue_style( 'emc-fonts-handwritten', 'https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Pacifico&family=Great+Vibes&family=Caveat:wght@400;500;600;700&family=Satisfy&family=Cookie&family=Kalam:wght@300;400;700&family=Amatic+SC:wght@400;700&family=Indie+Flower&family=Sacramento&family=Patrick+Hand&family=Gloria+Hallelujah&family=Caveat+Brush&family=Permanent+Marker&family=Handlee&display=swap', array( 'emc-fonts-base' ), null );
+		wp_enqueue_style( 'emc-fonts-handwritten-2', 'https://fonts.googleapis.com/css2?family=Allura&family=Mr+Dafoe&family=Marck+Script&family=Shadows+Into+Light&family=Nothing+You+Could+Do&family=Architects+Daughter&family=Covered+By+Your+Grace&family=Courgette&family=Yellowtail&family=Bad+Script&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Sriracha&family=Neucha&family=Coming+Soon&family=Reenie+Beanie&family=Rock+Salt&display=swap', array( 'emc-fonts-handwritten' ), null );
 	}
 
 	public static function enqueue_for_checkout() {
 		global $post;
-		if ( ! $post || ! has_shortcode( $post->post_content, 'entrymark_paspas_checkout' ) ) {
+		$has_shortcode = $post && has_shortcode( $post->post_content, 'entrymark_paspas_checkout' );
+		if ( ! $has_shortcode && ! self::is_checkout_page() ) {
 			return;
 		}
+		self::maybe_inject_checkout_data();
 		wp_enqueue_style(
 			'emc-checkout',
 			EMC_PLUGIN_URL . 'assets/frontend/checkout.css',

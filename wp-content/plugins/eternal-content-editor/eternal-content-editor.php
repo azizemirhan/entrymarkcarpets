@@ -52,9 +52,10 @@ require_once ECE_PLUGIN_DIR . 'includes/general-settings.php';
 require_once ECE_PLUGIN_DIR . 'includes/home-settings.php';
 require_once ECE_PLUGIN_DIR . 'includes/about-settings.php';
 require_once ECE_PLUGIN_DIR . 'includes/contact-settings.php';
+require_once ECE_PLUGIN_DIR . 'includes/gallery-settings.php';
 
 /**
- * Mevcut sayfalar — Genel Ayarlar, Anasayfa, Hakkımızda, İletişim
+ * Mevcut sayfalar — Genel Ayarlar, Anasayfa, Hakkımızda, İletişim, Galeri
  */
 function ece_get_pages()
 {
@@ -63,6 +64,7 @@ function ece_get_pages()
         'home'    => ['label' => 'Anasayfa', 'icon' => 'fas fa-home', 'callback' => 'ece_home_settings_page'],
         'about'   => ['label' => 'Hakkımızda', 'icon' => 'fas fa-info-circle', 'callback' => 'ece_about_settings_page'],
         'contact' => ['label' => 'İletişim', 'icon' => 'fas fa-envelope', 'callback' => 'ece_contact_settings_page'],
+        'gallery' => ['label' => 'Galeri', 'icon' => 'fas fa-images', 'callback' => 'ece_gallery_settings_page'],
     ];
 }
 
@@ -251,6 +253,81 @@ add_action('admin_post_ece_save_contact', function () {
     $redirect = add_query_arg([
         'page' => 'eternal-content',
         'ece_page' => 'contact',
+        'tab' => $active_tab,
+        'updated' => 'true',
+    ], admin_url('admin.php'));
+    wp_safe_redirect($redirect);
+    exit;
+});
+
+/**
+ * Galeri sayfası ayarları — Kaydet
+ */
+add_action('admin_post_ece_save_gallery', function () {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('Yetkiniz yok.', 'eternal-content-editor'));
+    }
+    $nonce = isset($_POST['ece_gallery_nonce']) ? sanitize_text_field(wp_unslash($_POST['ece_gallery_nonce'])) : '';
+    if (empty($nonce) || !wp_verify_nonce($nonce, 'ece_save_gallery_action')) {
+        wp_die(esc_html__('Güvenlik doğrulaması başarısız. Sayfayı yenileyip tekrar deneyin.', 'eternal-content-editor'));
+    }
+    $fields = isset($_POST['ece']) && is_array($_POST['ece']) ? wp_unslash($_POST['ece']) : [];
+    if (isset($fields['products']) && is_array($fields['products'])) {
+        $products = [];
+        foreach (array_values($fields['products']) as $i => $row) {
+            if (!is_array($row)) continue;
+            $colors_str = isset($row['colors']) ? sanitize_text_field($row['colors']) : '';
+            $colors_arr = array_filter(array_map('trim', explode(',', $colors_str)));
+            if (empty($colors_arr) && !empty($row['color'])) {
+                $colors_arr = [sanitize_text_field($row['color'])];
+            }
+            $products[] = [
+                'id' => $i + 1,
+                'title' => isset($row['title']) ? sanitize_text_field($row['title']) : '',
+                'collection' => isset($row['collection']) ? sanitize_text_field($row['collection']) : '',
+                'category' => in_array($row['category'] ?? '', ['hotel', 'office', 'custom', 'residential'], true) ? sanitize_key($row['category']) : 'custom',
+                'color' => isset($row['color']) ? sanitize_hex_color($row['color']) ?: sanitize_text_field($row['color']) : '#2D3748',
+                'colors' => $colors_arr,
+                'material' => isset($row['material']) ? sanitize_text_field($row['material']) : '',
+                'size' => isset($row['size']) ? sanitize_text_field($row['size']) : '',
+                'thickness' => isset($row['thickness']) ? sanitize_text_field($row['thickness']) : '',
+                'price' => isset($row['price']) ? sanitize_text_field($row['price']) : '',
+                'desc' => isset($row['desc']) ? sanitize_textarea_field($row['desc']) : '',
+                'badge' => in_array($row['badge'] ?? '', ['new', 'popular', 'sale'], true) ? sanitize_key($row['badge']) : null,
+                'layout' => in_array($row['layout'] ?? '', ['normal', 'tall', 'wide', 'featured'], true) ? sanitize_key($row['layout']) : 'normal',
+            ];
+        }
+        update_option('eternal_gallery_products_json', wp_json_encode($products, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        unset($fields['products']);
+    }
+    if (isset($fields['categories']) && is_array($fields['categories'])) {
+        $lines = [];
+        foreach (array_values($fields['categories']) as $row) {
+            if (!is_array($row)) continue;
+            $label = isset($row['label']) ? sanitize_text_field($row['label']) : '';
+            $slug = isset($row['slug']) ? sanitize_key(str_replace(' ', '-', $row['slug'])) : '';
+            if ($label !== '' || $slug !== '') {
+                $lines[] = $label . '|' . ($slug !== '' ? $slug : 'cat-' . count($lines));
+            }
+        }
+        if (!empty($lines)) {
+            update_option('eternal_gallery_filters_items', implode("\n", $lines));
+        }
+        unset($fields['categories']);
+    }
+    foreach ($fields as $key => $value) {
+        $sanitized_key = sanitize_key(str_replace([' ', '-'], '_', $key));
+        if (empty($sanitized_key)) continue;
+        if ($sanitized_key === 'products_json') {
+            continue;
+        }
+        $sanitized_value = is_array($value) ? ece_sanitize_nested($value) : sanitize_textarea_field($value);
+        update_option('eternal_gallery_' . $sanitized_key, $sanitized_value);
+    }
+    $active_tab = isset($_POST['ece_active_tab']) ? sanitize_key($_POST['ece_active_tab']) : 'hero';
+    $redirect = add_query_arg([
+        'page' => 'eternal-content',
+        'ece_page' => 'gallery',
         'tab' => $active_tab,
         'updated' => 'true',
     ], admin_url('admin.php'));

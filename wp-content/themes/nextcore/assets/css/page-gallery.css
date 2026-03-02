@@ -24,6 +24,12 @@
   overflow: hidden;
 }
 
+/* Header ile grid arasındaki boşluğu kapat */
+.gallery-section--header + .gallery-section--grid {
+  padding-top: 24px;
+  padding-bottom: 80px;
+}
+
 .gallery-section::before {
   content: '';
   position: absolute;
@@ -50,7 +56,7 @@
 
 .gallery-header {
   max-width: 1400px;
-  margin: 0 auto 60px;
+  margin: 0 auto 28px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;

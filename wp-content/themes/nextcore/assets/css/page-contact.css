@@ -425,6 +425,19 @@ textarea.form-input {
   position: relative;
   z-index: 1;
 }
+.map-placeholder-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  min-height: 100%;
+}
+.map-placeholder-link:hover {
+  color: inherit;
+  opacity: 0.9;
+}
 .map-placeholder-icon {
   width: 60px;
   height: 60px;

@@ -877,8 +877,8 @@
 	align-items: center;
 	gap: 12px;
 	padding: 18px 36px;
-	background: linear-gradient(135deg, var(--dark, #2D3748), var(--navy, #215387));
-	color: #fff;
+	background: linear-gradient(135deg, #141d2b 0%, #152536 50%, #162d47 100%);
+	color: #ffffff !important;
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 1px;
@@ -890,6 +890,7 @@
 	transition: all 0.45s ease;
 	border: none;
 	cursor: pointer;
+	box-shadow: 0 4px 14px rgba(22, 45, 71, 0.4);
 }
 
 .cta-main-btn::before {
@@ -911,6 +912,9 @@
 .cta-main-btn svg {
 	width: 18px; height: 18px;
 	transition: transform 0.3s ease;
+	color: #ffffff !important;
+	stroke: #ffffff !important;
+	fill: none;
 }
 
 .cta-main-btn:hover svg { transform: translateX(4px); }

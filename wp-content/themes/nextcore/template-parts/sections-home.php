@@ -12,20 +12,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 $home_get = function( $k, $d = '' ) {
 	return function_exists( 'ece_home_get' ) ? ece_home_get( $k, $d ) : get_option( 'eternal_home_' . $k, $d );
 };
+
+// Veritabanında kayıtlı İngilizce metinleri Türkçeye çevir (admin’den gelen değerler için)
+$home_tr = function( $val ) {
+	if ( ! is_string( $val ) || trim( $val ) === '' ) {
+		return $val;
+	}
+	$v = trim( $val );
+	$map = array(
+		'Custom Carpet Designer'     => 'Özel Paspas Tasarımcısı',
+		'CUSTOM CARPET DESIGNER'     => 'ÖZEL PASPAS TASARIMCISI',
+		'Design Your'                => 'Hayalinizdeki',
+		'Perfect Carpet'             => 'Paspası',
+		'in Minutes'                 => 'Dakikalar İçinde Tasarlayın',
+		'Design Your Perfect Carpet in Minutes' => 'Hayalinizdeki Paspası Dakikalar İçinde Tasarlayın',
+		'Choose from 24+ premium colors, select your size, upload your logo, and watch your custom carpet come to life — all in our interactive design studio.' => '24\'ten fazla premium renk arasından seçin, ölçünüzü belirleyin, logonuzu yükleyin ve özel paspasınızın interaktif tasarım stüdyomuzda hayat bulmasını izleyin.',
+		'Choose from 24+ premium colors, select your size, upload your logo, and watch your custom carpet come to life – all in our interactive design studio.' => '24\'ten fazla premium renk arasından seçin, ölçünüzü belirleyin, logonuzu yükleyin ve özel paspasınızın interaktif tasarım stüdyomuzda hayat bulmasını izleyin.',
+		'Start Designing'           => 'Tasarlamaya Başla',
+		'START DESIGNING'            => 'TASARLAMAYA BAŞLA',
+		'See How It Works'           => 'Nasıl Çalışır?',
+		'Hotels Worldwide'           => 'Dünya Çapında Otel',
+		'Countries Delivered'        => 'Ülkeye Teslimat',
+		'Of Excellence'              => 'Mükemmellik',
+		'Design Approval'           => 'Tasarım Onayı',
+		'30yrs'                      => '30 yıl',
+		'24h'                        => '24 s',
+		'Premium Quality'           => 'Premium Kalite',
+		'Global Shipping'            => 'Global Kargo',
+		'Express Production'         => 'Hızlı Üretim',
+		'Designer Support'           => 'Tasarımcı Desteği',
+		'Certified materials only'  => 'Yalnızca sertifikalı malzemeler',
+		'40+ countries worldwide'   => '40\'tan fazla ülkeye teslimat',
+		'72-hour rush available'    => '72 saat express üretim',
+		'Free design consultation'  => 'Ücretsiz tasarım danışmanlığı',
+	);
+	if ( isset( $map[ $v ] ) ) {
+		return $map[ $v ];
+	}
+	// Küçük farklılıklar için (tire, boşluk vb.)
+	foreach ( $map as $en => $tr ) {
+		if ( strcasecmp( $v, $en ) === 0 ) {
+			return $tr;
+		}
+	}
+	return $val;
+};
+
 $section_on = function( $prefix, $key ) {
 	return function_exists( 'ece_section_active' ) ? ece_section_active( $prefix, $key ) : ( get_option( 'eternal_' . $prefix . '_' . $key . '_status', '1' ) === '1' );
 };
 
 $customizer_url = $home_get( 'hero_cta_primary_url', '' );
-if ( $customizer_url === '' ) {
-	$customizer_url = home_url( '/ozellestir/' );
+if ( $customizer_url === '' && function_exists( 'nextcore_get_customizer_url' ) ) {
+	$customizer_url = nextcore_get_customizer_url();
+} elseif ( $customizer_url === '' ) {
+	$customizer_url = home_url( '/paspas-ozellestir/' );
 }
 $cta_btn_url = $home_get( 'cta_btn_url', '' );
-if ( $cta_btn_url === '' ) {
-	$cta_btn_url = home_url( '/ozellestir/' );
+if ( $cta_btn_url === '' && function_exists( 'nextcore_get_customizer_url' ) ) {
+	$cta_btn_url = nextcore_get_customizer_url();
+} elseif ( $cta_btn_url === '' ) {
+	$cta_btn_url = home_url( '/paspas-ozellestir/' );
 }
-$cta_secondary_url = $home_get( 'hero_cta_secondary_url', '#how-it-works' );
-$cta_sample_url = $home_get( 'cta_sample_url', '#' );
+$cta_secondary_url = $home_get( 'hero_cta_secondary_url', '' );
+if ( $cta_secondary_url === '' ) {
+	$cta_secondary_url = home_url( '/' ) . '#how-it-works';
+} elseif ( strpos( $cta_secondary_url, '#' ) === 0 ) {
+	$cta_secondary_url = home_url( '/' ) . $cta_secondary_url;
+}
 
 $hero_bg_type   = $home_get( 'hero_bg_type', 'default' );
 $hero_bg_image  = $home_get( 'hero_bg_image', '' );
@@ -76,35 +130,35 @@ if ( is_array( $emc_textures_raw ) && ! empty( $emc_textures_raw ) ) {
 		<div class="hero-content-inner">
 		<div class="hero-eyebrow">
 			<span class="hero-eyebrow-line"></span>
-			<span class="hero-eyebrow-text"><?php echo esc_html( $home_get( 'hero_eyebrow', 'Custom Carpet Designer' ) ); ?></span>
+			<span class="hero-eyebrow-text"><?php echo esc_html( $home_tr( $home_get( 'hero_eyebrow', 'Özel Paspas Tasarımcısı' ) ) ); ?></span>
 		</div>
 
 		<h1 class="hero-heading">
-			<?php echo esc_html( $home_get( 'hero_heading_1', 'Design Your' ) ); ?>
-			<span class="line-break"><?php echo esc_html( $home_get( 'hero_heading_2', 'Perfect Carpet' ) ); ?></span>
-			<span class="line-break"><?php echo esc_html( $home_get( 'hero_heading_3', 'in Minutes' ) ); ?></span>
+			<?php echo esc_html( $home_tr( $home_get( 'hero_heading_1', 'Hayalinizdeki' ) ) ); ?>
+			<span class="line-break"><?php echo esc_html( $home_tr( $home_get( 'hero_heading_2', 'Paspası' ) ) ); ?></span>
+			<span class="line-break"><?php echo esc_html( $home_tr( $home_get( 'hero_heading_3', 'Dakikalar İçinde Tasarlayın' ) ) ); ?></span>
 		</h1>
 
 		<p class="hero-subtext">
-			<?php echo wp_kses_post( nl2br( esc_html( $home_get( 'hero_subtext', 'Choose from 24+ premium colors, select your size, upload your logo, and watch your custom carpet come to life — all in our interactive design studio.' ) ) ) ); ?>
+			<?php echo wp_kses_post( nl2br( esc_html( $home_tr( $home_get( 'hero_subtext', '24\'ten fazla premium renk arasından seçin, ölçünüzü belirleyin, logonuzu yükleyin ve özel paspasınızın interaktif tasarım stüdyomuzda hayat bulmasını izleyin.' ) ) ) ) ); ?>
 		</p>
 
 		<div class="hero-cta-group">
 			<a href="<?php echo esc_url( $customizer_url ); ?>" class="hero-cta-primary">
-				<?php echo esc_html( $home_get( 'hero_cta_primary_text', 'Start Designing' ) ); ?>
+				<?php echo esc_html( $home_tr( $home_get( 'hero_cta_primary_text', 'Tasarlamaya Başla' ) ) ); ?>
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
 			</a>
 			<a href="<?php echo esc_url( $cta_secondary_url ); ?>" class="hero-cta-secondary">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3" fill="rgba(255,255,255,0.1)"/></svg>
-				<?php echo esc_html( $home_get( 'hero_cta_secondary_text', 'See How It Works' ) ); ?>
+				<?php echo esc_html( $home_tr( $home_get( 'hero_cta_secondary_text', 'Nasıl Çalışır?' ) ) ); ?>
 			</a>
 		</div>
 
 		<div class="hero-stats">
 			<?php for ( $i = 1; $i <= 4; $i++ ) : ?>
 			<div class="hero-stat">
-				<div class="hero-stat-number"><?php echo esc_html( $home_get( 'hero_stat' . $i . '_number', [ '500+', '40+', '30yrs', '24h' ][ $i - 1 ] ) ); ?></div>
-				<div class="hero-stat-label"><?php echo esc_html( $home_get( 'hero_stat' . $i . '_label', [ 'Hotels Worldwide', 'Countries Delivered', 'Of Excellence', 'Design Approval' ][ $i - 1 ] ) ); ?></div>
+				<div class="hero-stat-number"><?php echo esc_html( $home_tr( $home_get( 'hero_stat' . $i . '_number', [ '500+', '40+', '30 yıl', '24 s' ][ $i - 1 ] ) ) ); ?></div>
+				<div class="hero-stat-label"><?php echo esc_html( $home_tr( $home_get( 'hero_stat' . $i . '_label', [ 'Dünya Çapında Otel', 'Ülkeye Teslimat', 'Mükemmellik', 'Tasarım Onayı' ][ $i - 1 ] ) ) ); ?></div>
 			</div>
 			<?php endfor; ?>
 		</div>
@@ -120,13 +174,13 @@ if ( is_array( $emc_textures_raw ) && ! empty( $emc_textures_raw ) ) {
 		<div class="float-card float-card-1">
 			<div class="float-card-inner" style="background:#2E5A1C;">
 				<div class="fc-texture"></div>
-				<div class="float-card-tag">Forest Green</div>
+				<div class="float-card-tag">Orman Yeşili</div>
 			</div>
 		</div>
 		<div class="float-card float-card-2">
 			<div class="float-card-inner" style="background:#C4A265;">
 				<div class="fc-texture"></div>
-				<div class="float-card-tag">Golden</div>
+				<div class="float-card-tag">Altın</div>
 			</div>
 		</div>
 
@@ -142,7 +196,7 @@ if ( is_array( $emc_textures_raw ) && ! empty( $emc_textures_raw ) ) {
 							<div class="carpet-logo-icon">
 								<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
 							</div>
-							<div class="carpet-logo-text">Your Logo</div>
+							<div class="carpet-logo-text">Logonuz</div>
 						<?php endif; ?>
 					</div>
 					<div class="carpet-bottom-text"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
@@ -182,8 +236,8 @@ if ( is_array( $emc_textures_raw ) && ! empty( $emc_textures_raw ) ) {
 				<?php echo $feature_icons[ $i - 1 ]; ?>
 			</div>
 			<div class="feature-text">
-				<strong><?php echo esc_html( $home_get( 'features_title_' . $i, [ 'Premium Quality', 'Global Shipping', 'Express Production', 'Designer Support' ][ $i - 1 ] ) ); ?></strong>
-				<span><?php echo esc_html( $home_get( 'features_desc_' . $i, [ 'Certified materials only', '40+ countries worldwide', '72-hour rush available', 'Free design consultation' ][ $i - 1 ] ) ); ?></span>
+				<strong><?php echo esc_html( $home_tr( $home_get( 'features_title_' . $i, [ 'Premium Kalite', 'Global Kargo', 'Hızlı Üretim', 'Tasarımcı Desteği' ][ $i - 1 ] ) ) ); ?></strong>
+				<span><?php echo esc_html( $home_tr( $home_get( 'features_desc_' . $i, [ 'Yalnızca sertifikalı malzemeler', '40\'tan fazla ülkeye teslimat', '72 saat express üretim', 'Ücretsiz tasarım danışmanlığı' ][ $i - 1 ] ) ) ); ?></span>
 			</div>
 		</div>
 		<?php endfor; ?>
@@ -245,10 +299,6 @@ if ( is_array( $emc_textures_raw ) && ! empty( $emc_textures_raw ) ) {
 				<a href="<?php echo esc_url( $cta_btn_url ); ?>" class="cta-main-btn">
 					<?php echo esc_html( $home_get( 'cta_btn_text', 'Tasarlamaya Başla' ) ); ?>
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-				</a>
-				<a href="<?php echo esc_url( $cta_sample_url ); ?>" class="cta-sample-btn">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-					<?php echo esc_html( $home_get( 'cta_sample_text', 'Numune İste' ) ); ?>
 				</a>
 			</div>
 		</div>

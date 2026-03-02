@@ -16,7 +16,9 @@ docker compose up -d --build
 
 Site adresi: **http://localhost:9080**
 
-İlk açılışta WordPress kurulum ekranı gelir; veritabanı bilgileri otomatik ayarlıdır (DB: `wordpress`, kullanıcı: `wordpress`, şifre: `wordpress`, sunucu: `db`).
+- **İlk çalıştırmada** `entrymarkcarpets-export.sql` dosyası otomatik olarak `wordpress` veritabanına yüklenir; kurulum ekranı yerine mevcut site açılır.
+- Veritabanı volume'u zaten doluysa (daha önce `up` çalıştırdıysanız) SQL tekrar çalışmaz. Sıfırdan import için: `docker compose down -v` sonra tekrar `docker compose up -d`.
+- Veritabanı bilgileri: DB: `wordpress`, kullanıcı: `wordpress`, şifre: `wordpress`, sunucu: `db`.
 
 ## Ortam değişkenleri (.env)
 
@@ -41,6 +43,11 @@ docker compose logs -f wordpress
 # Sadece build (çalıştırmadan)
 docker compose build
 ```
+
+## SQL import
+
+- Proje kökündeki `entrymarkcarpets-export.sql`, ilk açılışta (veritabanı volume'u boşken) `wordpress` veritabanına otomatik yüklenir.
+- Yeni bir SQL ile baştan başlamak için: `docker compose down -v` (volume'ları siler), ardından `docker compose up -d`.
 
 ## Notlar
 

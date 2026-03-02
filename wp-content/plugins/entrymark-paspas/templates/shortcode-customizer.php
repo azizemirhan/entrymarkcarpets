@@ -167,6 +167,13 @@ if (!defined('ABSPATH')) exit;
                 <option value="Arial, sans-serif">Arial</option>
               </select>
             </div>
+            <div class="text-size-row">
+              <label for="emcTextSize">Yazı boyutu</label>
+              <div class="text-size-control">
+                <input type="range" id="emcTextSize" min="50" max="300" value="100" step="5" title="Yazı boyutu">
+                <span class="text-size-value" id="emcTextSizeValue">100%</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -284,6 +291,66 @@ if (!defined('ABSPATH')) exit;
     <div class="emc-loading" id="emcLoading">
       <div class="loading-spinner"></div>
       <span>İşleniyor...</span>
+    </div>
+
+    <!-- Önizleme sayfası (Sepete Ekle öncesi son hal) -->
+    <div class="emc-preview-overlay" id="emcPreviewOverlay" aria-hidden="true">
+      <div class="emc-preview-backdrop" id="emcPreviewBackdrop"></div>
+      <div class="emc-preview-modal">
+        <div class="emc-preview-header">
+          <h3>Tasarım Önizleme</h3>
+          <button type="button" class="emc-preview-close" id="emcPreviewClose" title="Kapat">×</button>
+        </div>
+        <p class="emc-preview-desc">Paspas tasarımınızın son hali. Sepete eklemek için aşağıdaki butonu kullanın.</p>
+        <div class="emc-preview-content">
+          <div class="emc-preview-canvas-area">
+            <div class="emc-preview-canvas-wrap">
+              <img id="emcPreviewImage" alt="Paspas tasarım önizleme" class="emc-preview-image">
+              <span class="emc-preview-size-badge" id="emcPreviewSizeBadge">40 × 70 cm</span>
+            </div>
+            <button type="button" class="emc-preview-zoom-btn" id="emcPreviewZoomBtn" title="Tam ekran incele">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <span>Büyüteç</span>
+            </button>
+          </div>
+          <div class="emc-preview-summary">
+            <div class="emc-preview-detail"><span>Şekil</span><strong id="emcPreviewShape">Yatay</strong></div>
+            <div class="emc-preview-detail"><span>Doku</span><strong id="emcPreviewTexture">—</strong></div>
+            <div class="emc-preview-detail"><span>Ölçü</span><strong id="emcPreviewSize">40 × 70 cm</strong></div>
+            <div class="emc-preview-detail"><span>Gönderim</span><strong id="emcPreviewShipping">—</strong></div>
+            <div class="emc-preview-total">
+              <span>Toplam</span>
+              <strong id="emcPreviewTotal">0 TL</strong>
+            </div>
+            <div class="emc-preview-actions">
+              <button type="button" class="btn-secondary emc-preview-back-btn" id="emcPreviewBack">Düzenlemeye Dön</button>
+              <button type="button" class="btn-add-cart emc-preview-add-cart" id="emcPreviewAddCart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                Sepete Ekle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tam sayfa tasarım görüntüleme (büyüteç tıklanınca) -->
+      <div class="emc-preview-fullscreen" id="emcPreviewFullscreen" aria-hidden="true">
+        <button type="button" class="emc-preview-fullscreen-close" id="emcPreviewFullscreenClose" title="Kapat">×</button>
+        <div class="emc-preview-fullscreen-backdrop" id="emcPreviewFullscreenBackdrop"></div>
+        <div class="emc-preview-fullscreen-zoom-controls">
+          <button type="button" class="emc-fs-zoom-btn" id="emcFsZoomOut" title="Uzaklaştır">−</button>
+          <span class="emc-fs-zoom-value" id="emcFsZoomValue">100%</span>
+          <button type="button" class="emc-fs-zoom-btn" id="emcFsZoomIn" title="Yakınlaştır">+</button>
+          <button type="button" class="emc-fs-zoom-btn emc-fs-zoom-reset" id="emcFsZoomReset" title="Sıfırla">1:1</button>
+        </div>
+        <div class="emc-preview-fullscreen-img-wrap" id="emcPreviewFullscreenImgWrap">
+          <img id="emcPreviewFullscreenImage" alt="Paspas tasarımı tam ekran" class="emc-preview-fullscreen-img">
+        </div>
+      </div>
     </div>
   </div>
 </div>

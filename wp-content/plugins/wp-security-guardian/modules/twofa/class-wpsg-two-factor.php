@@ -103,17 +103,33 @@ class WPSG_Two_Factor {
 		return $google2fa->generateSecretKey( 16 );
 	}
 
-	public function login_form_field() {
-		?>
+	public function login_form_field( $content ) {
+		// Sadece varsayılan wp-login.php ekranında 2FA alanı göster; tema giriş/hesabım sayfalarında gösterme.
+		if ( ! $this->is_wp_login_screen() ) {
+			return $content . '<input type="hidden" name="wpsg_2fa_skip" value="1" />';
+		}
+		return $content . '
 		<p>
-			<label for="wpsg_2fa_code"><?php esc_html_e( 'İki Faktörlü Kod', 'wp-security-guardian' ); ?></label>
+			<label for="wpsg_2fa_code">' . esc_html__( 'İki Faktörlü Kod', 'wp-security-guardian' ) . '</label>
 			<input type="text" name="wpsg_2fa_code" id="wpsg_2fa_code" class="input" size="20" autocomplete="one-time-code" placeholder="000000" />
-		</p>
-		<?php
+		</p>';
+	}
+
+	/**
+	 * Şu an varsayılan WordPress giriş ekranında mıyız (wp-login.php)?
+	 */
+	private function is_wp_login_screen() {
+		global $pagenow;
+		return ( isset( $pagenow ) && $pagenow === 'wp-login.php' );
 	}
 
 	public function validate_2fa( $user, $password ) {
 		if ( is_wp_error( $user ) ) {
+			return $user;
+		}
+
+		// Giriş yap / Hesabım sayfalarında 2FA atlanır (tema tarafında alan gösterilmiyor).
+		if ( ! empty( $_POST['wpsg_2fa_skip'] ) ) {
 			return $user;
 		}
 

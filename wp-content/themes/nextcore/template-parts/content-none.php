@@ -34,7 +34,7 @@
 		elseif ( is_search() ) :
 			?>
 
-			<p><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'nextcore' ); ?></p>
+			<p><?php esc_html_e( 'Bu arama ile eşleşen içerik bulunamadı. Farklı kelimelerle tekrar deneyin.', 'nextcore' ); ?></p>
 			<?php
 			get_search_form();
 

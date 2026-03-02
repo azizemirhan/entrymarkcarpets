@@ -18,11 +18,12 @@ class EMC_Checkout {
 	/**
 	 * Sepetten sipariş oluştur.
 	 *
-	 * @param array $customer  ad, soyad, email, telefon, adres (string)
+	 * @param array  $customer  ad, soyad, email, telefon, adres (string)
+	 * @param string $cart_id   Opsiyonel; verilirse bu sepetteki ürünler kullanılır (cookie gitmediğinde REST header ile).
 	 * @return int|WP_Error  order post ID veya hata
 	 */
-	public static function create_order_from_cart( $customer ) {
-		$items = EMC_Cart::get_items();
+	public static function create_order_from_cart( $customer, $cart_id = null ) {
+		$items = EMC_Cart::get_items( $cart_id );
 		if ( empty( $items ) ) {
 			return new \WP_Error( 'empty_cart', __( 'Sepetiniz boş.', 'entrymark-paspas' ) );
 		}
@@ -56,7 +57,7 @@ class EMC_Checkout {
 		update_post_meta( $order_id, '_emc_status', self::ORDER_STATUS_PENDING );
 		update_post_meta( $order_id, '_emc_total', $total );
 		update_post_meta( $order_id, '_emc_paytr_oid', '' );
-		EMC_Cart::empty_cart();
+		EMC_Cart::empty_cart( $cart_id );
 		return $order_id;
 	}
 

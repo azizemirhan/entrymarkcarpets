@@ -273,6 +273,80 @@
     }
 }
 
+/* Galeri ürün satırları */
+.ece-product-row {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+}
+.ece-product-row:last-child { margin-bottom: 0; }
+.ece-product-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e4e7;
+}
+.ece-product-row-header strong { font-size: 0.95rem; color: #1d2327; }
+.ece-product-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px 20px;
+}
+.ece-product-fields .ece-field-full { grid-column: 1 / -1; }
+.ece-product-remove { flex-shrink: 0; }
+
+/* Galeri ürünler sayfalama */
+.ece-products-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 16px;
+    padding: 12px 16px;
+    background: #f0f0f1;
+    border-radius: 8px;
+    border: 1px solid #e2e4e7;
+}
+.ece-products-pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ece-products-pagination .button {
+    min-width: 36px;
+}
+.ece-products-pagination .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.ece-products-pagination-info {
+    font-size: 13px;
+    color: #646970;
+}
+
+/* Galeri kategorileri (filtreler) */
+.ece-category-row {
+    margin-bottom: 16px;
+}
+.ece-category-row-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+}
+.ece-category-row-inner .ece-field {
+    margin-bottom: 0;
+    min-width: 140px;
+}
+.ece-category-row-inner .ece-field:first-child { flex: 1; min-width: 180px; }
+.ece-category-row-inner .ece-field-actions { flex-shrink: 0; }
+.ece-category-row-inner .ece-field label .description { font-weight: normal; text-transform: none; letter-spacing: 0; font-size: 11px; color: #646970; }
+
 /* Repeater items */
 .ece-repeater-item {
     position: relative;

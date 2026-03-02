@@ -14,17 +14,32 @@ $social_fb      = get_option( 'eternal_general_social_facebook', '' );
 $social_li      = get_option( 'eternal_general_social_linkedin', '' );
 $social_pin     = get_option( 'eternal_general_social_pinterest', '' );
 
-// Varsayılan ticker items
+// Varsayılan ticker items (Türkçe)
 if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
     $ticker_items = [
-        [ 'text' => 'Free Shipping on Orders Over $500' ],
-        [ 'text' => 'New Collection — Aegean Luxe Series Now Available' ],
-        [ 'text' => 'Custom Design Lab — Create Your Own Carpet' ],
-        [ 'text' => 'Trusted by 500+ Hotels Worldwide' ],
-        [ 'text' => 'Premium Quality Since 1992' ],
-        [ 'text' => 'Request a Free Sample Today' ],
+        [ 'text' => '500 TL üzeri siparişlerde ücretsiz kargo' ],
+        [ 'text' => 'Yeni koleksiyon — Ege Lüks serisi şimdi satışta' ],
+        [ 'text' => 'Kendin Tasarla — Kendi halını oluştur' ],
+        [ 'text' => 'Dünya genelinde 500\'den fazla otel tarafından tercih ediliyoruz' ],
+        [ 'text' => '1992\'den beri premium kalite' ],
+        [ 'text' => 'Ücretsiz numune talep edin' ],
     ];
 }
+
+// Kayan yazı: veritabanındaki İngilizce metinleri Türkçe gösterme
+$ticker_tr = array(
+    'Free Shipping on Orders Over $500' => '500 TL üzeri siparişlerde ücretsiz kargo',
+    'New Collection — Aegean Luxe Series Now Available' => 'Yeni koleksiyon — Ege Lüks serisi şimdi satışta',
+    'NEW COLLECTION - AEGEAN LUXE SERIES NOW AVAILABLE' => 'YENİ KOLEKSİYON - EGE LÜKS SERİSİ ŞİMDİ SATIŞTA',
+    'Custom Design Lab — Create Your Own Carpet' => 'Kendin Tasarla — Kendi halını oluştur',
+    'CUSTOM DESIGN LAB - CREATE YOUR OWN CARPET' => 'KENDİN TASARLA - KENDİ HALINI OLUŞTUR',
+    'Trusted by 500+ Hotels Worldwide' => 'Dünya genelinde 500\'den fazla otel tarafından tercih ediliyoruz',
+    'TRUSTED BY 500+ HOTELS WORLDWIDE' => 'DÜNYA GENELİNDE 500\'DEN FAZLA OTEL TARAFINDAN TERCİH EDİLİYORUZ',
+    'Premium Quality Since 1992' => '1992\'den beri premium kalite',
+    'PREMIUM QUALITY SINCE 1992' => '1992\'DEN BERİ PREMİUM KALİTE',
+    'Request a Free Sample Today' => 'Ücretsiz numune talep edin',
+    'REQUEST A FREE SAMPLE' => 'ÜCRETSİZ NUMUNE TALEP EDİN',
+);
 
 ?>
 <!doctype html>
@@ -179,6 +194,13 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
             gap: 50px;
             flex: 1;
         }
+        .logo-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            flex-shrink: 0;
+        }
         .logo {
             display: flex;
             align-items: center;
@@ -190,6 +212,29 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
             width: auto;
             display: block;
             object-fit: contain;
+        }
+        .logo-social {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-social a {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--dark-50);
+            transition: color 0.25s ease, background 0.25s ease;
+        }
+        .logo-social a:hover {
+            color: var(--navy);
+            background: var(--navy-light);
+        }
+        .logo-social a svg {
+            width: 16px;
+            height: 16px;
         }
 
         /* Main Navigation */
@@ -740,6 +785,20 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
                 gap: 12px !important;
                 flex: 0 0 auto !important;
             }
+            .logo-wrap {
+                gap: 6px !important;
+            }
+            .logo-social {
+                gap: 6px !important;
+            }
+            .logo-social a {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            .logo-social a svg {
+                width: 14px !important;
+                height: 14px !important;
+            }
             .logo-img {
                 height: 40px !important;
                 max-width: 140px !important;
@@ -844,6 +903,9 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
                 height: 56px !important;
                 padding: 0 12px !important;
             }
+            .logo-social {
+                display: none !important;
+            }
             .logo-img {
                 height: 36px !important;
                 max-width: 120px !important;
@@ -872,16 +934,22 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
 <!-- Ticker Bar -->
 <div class="ticker-bar">
     <div class="ticker-track">
-        <?php foreach ( $ticker_items as $ti ) : ?>
+        <?php foreach ( $ticker_items as $ti ) :
+            $ticker_text = $ti['text'] ?? '';
+            $ticker_text = isset( $ticker_tr[ $ticker_text ] ) ? $ticker_tr[ $ticker_text ] : $ticker_text;
+            ?>
         <div class="ticker-item">
             <span class="ticker-dot"></span>
-            <?php echo wp_kses_post( $ti['text'] ?? '' ); ?>
+            <?php echo wp_kses_post( $ticker_text ); ?>
         </div>
         <?php endforeach; ?>
-        <?php foreach ( $ticker_items as $ti ) : ?>
+        <?php foreach ( $ticker_items as $ti ) :
+            $ticker_text = $ti['text'] ?? '';
+            $ticker_text = isset( $ticker_tr[ $ticker_text ] ) ? $ticker_tr[ $ticker_text ] : $ticker_text;
+            ?>
         <div class="ticker-item">
             <span class="ticker-dot"></span>
-            <?php echo wp_kses_post( $ti['text'] ?? '' ); ?>
+            <?php echo wp_kses_post( $ticker_text ); ?>
         </div>
         <?php endforeach; ?>
     </div>
@@ -915,14 +983,24 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
 <!-- Main Header -->
 <header class="main-header" id="mainHeader">
     <div class="header-left">
-        <!-- Logo -->
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo">
-            <?php if ( ! empty( $header_logo ) ) : ?>
-                <img src="<?php echo esc_url( nextcore_fix_image_url( $header_logo ) ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" class="logo-img">
-            <?php else : ?>
-                <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/logo-header.png' ); ?>" alt="Entry Mark Carpets" class="logo-img">
+        <!-- Logo + Sosyal medya -->
+        <div class="logo-wrap">
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo">
+                <?php if ( ! empty( $header_logo ) ) : ?>
+                    <img src="<?php echo esc_url( nextcore_fix_image_url( $header_logo ) ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" class="logo-img">
+                <?php else : ?>
+                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/logo-header.png' ); ?>" alt="Entry Mark Carpets" class="logo-img">
+                <?php endif; ?>
+            </a>
+            <?php if ( ( $social_ig && $social_ig !== '#' ) || ( $social_fb && $social_fb !== '#' ) || ( $social_li && $social_li !== '#' ) || ( $social_pin && $social_pin !== '#' ) ) : ?>
+            <div class="logo-social">
+                <?php if ( $social_ig && $social_ig !== '#' ) : ?><a href="<?php echo esc_url( $social_ig ); ?>" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a><?php endif; ?>
+                <?php if ( $social_fb && $social_fb !== '#' ) : ?><a href="<?php echo esc_url( $social_fb ); ?>" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a><?php endif; ?>
+                <?php if ( $social_li && $social_li !== '#' ) : ?><a href="<?php echo esc_url( $social_li ); ?>" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a><?php endif; ?>
+                <?php if ( $social_pin && $social_pin !== '#' ) : ?><a href="<?php echo esc_url( $social_pin ); ?>" target="_blank" rel="noopener noreferrer" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 21c1-3 1.5-5.5 2-7.5.5-2 1-3 2.5-3s2 1 1.5 3.5c-.5 2-1 3.5-1 5s.5 2 2 2c3 0 5-3.5 5-7 0-4-3-6.5-7-6.5-4.5 0-7.5 3-7.5 6.5 0 1 .5 2.5 1 3"/></svg></a><?php endif; ?>
+            </div>
             <?php endif; ?>
-        </a>
+        </div>
 
         <!-- Navigation -->
         <nav class="main-nav">
@@ -943,18 +1021,11 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
 
     <!-- Header Actions -->
     <div class="header-actions">
-        <button class="header-search-toggle" aria-label="Search">
+        <button type="button" class="header-search-toggle" id="searchToggle" aria-label="<?php esc_attr_e( 'Ara', 'nextcore' ); ?>">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="m21 21-4.35-4.35"/>
             </svg>
-        </button>
-
-        <button class="action-btn" aria-label="Wishlist">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            <span class="action-badge">2</span>
         </button>
 
         <div class="header-lang-switch lang-switch">
@@ -978,8 +1049,18 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
         <div class="action-divider"></div>
 
         <div class="auth-area">
-            <button class="btn-login">Sign In</button>
-            <button class="btn-register">Register</button>
+            <?php
+            $giris_url = function_exists( 'nextcore_get_giris_url' ) ? nextcore_get_giris_url() : home_url( '/giris/' );
+            $kayit_url = function_exists( 'nextcore_get_kayit_url' ) ? nextcore_get_kayit_url() : home_url( '/kayit/' );
+            $hesabim_url = function_exists( 'nextcore_get_hesabim_url' ) ? nextcore_get_hesabim_url() : home_url( '/hesabim/' );
+            if ( is_user_logged_in() ) :
+            ?>
+            <a href="<?php echo esc_url( $hesabim_url ); ?>" class="btn-login btn-hesabim">Hesabım</a>
+            <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="btn-register btn-logout">Çıkış</a>
+            <?php else : ?>
+            <a href="<?php echo esc_url( $giris_url ); ?>" class="btn-login">Giriş yap</a>
+            <a href="<?php echo esc_url( $kayit_url ); ?>" class="btn-register">Kayıt ol</a>
+            <?php endif; ?>
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -992,6 +1073,40 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
         </button>
     </div>
 </header>
+
+<!-- Arama overlay (search butonu ile açılır) -->
+<div class="search-overlay" id="searchOverlay" aria-hidden="true">
+	<button type="button" class="search-close-btn" id="searchClose" aria-label="<?php esc_attr_e( 'Aramayı kapat', 'nextcore' ); ?>">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+	</button>
+	<div class="search-overlay-inner">
+		<p class="search-overlay-title"><?php esc_html_e( 'Ara', 'nextcore' ); ?></p>
+		<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="search-overlay-form">
+			<div class="search-overlay-input-wrap">
+				<input type="search" name="s" class="search-overlay-input" placeholder="<?php esc_attr_e( 'Kelime veya ifade yazın...', 'nextcore' ); ?>" value="<?php echo get_search_query(); ?>" autocomplete="off" aria-label="<?php esc_attr_e( 'Arama', 'nextcore' ); ?>">
+			</div>
+			<button type="submit" class="search-overlay-submit"><?php esc_html_e( 'Ara', 'nextcore' ); ?></button>
+		</form>
+		<div class="search-suggestions">
+			<span class="search-suggestions-label"><?php esc_html_e( 'Önerilen:', 'nextcore' ); ?></span>
+			<div class="search-tags-wrap">
+				<button type="button" class="search-tag"><?php esc_html_e( 'Paspas', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Kendin Tasarla', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Galeri', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'İletişim', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Hakkımızda', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Değerlerimiz', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Sürdürülebilirlik', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Sepet', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'KVKK', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Gizlilik Politikası', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Çerez Politikası', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Kullanım Koşulları', 'nextcore' ); ?></button>
+				<button type="button" class="search-tag"><?php esc_html_e( 'Yardım Merkezi', 'nextcore' ); ?></button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
@@ -1010,8 +1125,15 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
     
     <!-- Mobile Auth Buttons -->
     <div class="mobile-menu-auth">
-        <a href="#" class="mobile-menu-btn mobile-menu-btn-register">Kayıt Ol</a>
-        <a href="#" class="mobile-menu-btn mobile-menu-btn-login">Giriş Yap</a>
+        <?php
+        if ( is_user_logged_in() ) :
+        ?>
+        <a href="<?php echo esc_url( $hesabim_url ); ?>" class="mobile-menu-btn mobile-menu-btn-hesabim">Hesabım</a>
+        <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="mobile-menu-btn mobile-menu-btn-logout">Çıkış</a>
+        <?php else : ?>
+        <a href="<?php echo esc_url( $kayit_url ); ?>" class="mobile-menu-btn mobile-menu-btn-register">Kayıt Ol</a>
+        <a href="<?php echo esc_url( $giris_url ); ?>" class="mobile-menu-btn mobile-menu-btn-login">Giriş Yap</a>
+        <?php endif; ?>
     </div>
     
     <!-- Mobile Utility: Mail, Phone, Language -->
@@ -1035,19 +1157,12 @@ if ( ! is_array( $ticker_items ) || empty( $ticker_items ) ) {
     
     <!-- Mobile Quick Actions -->
     <div class="mobile-menu-quick">
-        <a href="#" class="mobile-menu-quick-item">
+        <a href="<?php echo esc_url( get_search_link() ); ?>" class="mobile-menu-quick-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="m21 21-4.35-4.35"/>
             </svg>
             <span>Ara</span>
-        </a>
-        <a href="#" class="mobile-menu-quick-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            <span>Favorilerim</span>
-            <span class="mobile-menu-badge">2</span>
         </a>
     </div>
     

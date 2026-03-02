@@ -257,7 +257,7 @@ $specs_subtitle = $home_get( 'specs_subtitle', 'ECONYL® sertifikalı malzemeler
     <div class="made-in-content">
       <div class="made-in-title">
         Tüm Paspaslar Türkiye'de Üretilmiştir
-        <span class="turkey-tag">Made in Türkiye</span>
+        <span class="turkey-tag">Türkiye'de Üretilmiştir</span>
       </div>
       <div class="made-in-desc">Size üstün kalite ve hizmet garantisi veriyoruz! ECONYL® sertifikalı malzemeler, CNC lazer teknolojisi ve alanında uzman ekibimiz ile üretim yapmaktayız.</div>
     </div>

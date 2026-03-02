@@ -22,7 +22,13 @@ if (!empty($cart_items)) {
 $price_per_m2 = function_exists('emc_get_float_option') ? emc_get_float_option('emc_price_per_m2', 20.45) : (float) get_option('emc_price_per_m2', 20.45);
 $tax_rate = function_exists('emc_get_float_option') ? emc_get_float_option('emc_tax_rate', 10) : (float) get_option('emc_tax_rate', 10);
 $checkout_page_id = get_option('emc_checkout_page_id', 0);
-$checkout_url = $checkout_page_id ? get_permalink((int) $checkout_page_id) : home_url('/checkout');
+if ($checkout_page_id) {
+	$checkout_url = get_permalink((int) $checkout_page_id);
+} else {
+	// Ödeme sayfası atanmamışsa slug ile dene (odeme veya checkout)
+	$checkout_page = get_page_by_path('odeme') ?: get_page_by_path('checkout');
+	$checkout_url = $checkout_page ? get_permalink($checkout_page) : home_url('/odeme');
+}
 
 // Sepet sayfası ayarları
 $cart_title = get_option('emc_cart_title', 'Sepetim');
@@ -281,7 +287,7 @@ $trust_items = get_option('emc_trust_items', array(
         </div>
       </div>
       <div class="emc-summary-cta">
-        <a href="<?php echo esc_url($checkout_url); ?>" class="emc-checkout-btn" id="checkoutBtn">
+        <a href="<?php echo esc_url($checkout_url); ?>" class="emc-checkout-btn" id="checkoutBtn" title="Ödeme sayfasına git">
           Ödemeye Geç
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
         </a>

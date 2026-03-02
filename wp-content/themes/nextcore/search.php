@@ -8,46 +8,49 @@
  */
 
 get_header();
+
+$search_query = get_search_query();
 ?>
 
-	<main id="primary" class="site-main">
+	<main id="primary" class="site-main site-main--search">
 
-		<?php if ( have_posts() ) : ?>
+		<div class="search-results-wrap">
 
-			<header class="page-header">
-				<h1 class="page-title">
+			<header class="search-results-header">
+				<h1 class="search-results-title">
 					<?php
 					/* translators: %s: search query. */
-					printf( esc_html__( 'Search Results for: %s', 'nextcore' ), '<span>' . get_search_query() . '</span>' );
+					printf( esc_html__( 'Arama sonuçları: %s', 'nextcore' ), '<span class="search-results-query">' . esc_html( $search_query ) . '</span>' );
 					?>
 				</h1>
-			</header><!-- .page-header -->
+				<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="search-results-form">
+					<input type="search" name="s" class="search-results-input" placeholder="<?php esc_attr_e( 'Yeniden ara...', 'nextcore' ); ?>" value="<?php echo esc_attr( $search_query ); ?>">
+					<button type="submit" class="search-results-submit"><?php esc_html_e( 'Ara', 'nextcore' ); ?></button>
+				</form>
+			</header>
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) :
-				the_post();
+			<?php if ( have_posts() ) : ?>
 
-				/**
-				 * Run the loop for the search to output the results.
-				 * If you want to overload this in a child theme then include a file
-				 * called content-search.php and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', 'search' );
+				<div class="search-results-list">
+					<?php
+					while ( have_posts() ) :
+						the_post();
+						get_template_part( 'template-parts/content', 'search' );
+					endwhile;
+					?>
+				</div>
 
-			endwhile;
+				<?php the_posts_navigation(); ?>
 
-			the_posts_navigation();
+			<?php else : ?>
 
-		else :
+				<?php get_template_part( 'template-parts/content', 'none' ); ?>
 
-			get_template_part( 'template-parts/content', 'none' );
+			<?php endif; ?>
 
-		endif;
-		?>
+		</div>
 
 	</main><!-- #main -->
 
 <?php
-get_sidebar();
 get_footer();

@@ -31,6 +31,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# WP-CLI (veritabanı URL search-replace için)
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+
 # Güvenlik: DocumentRoot
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
@@ -42,9 +46,9 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/Allo
 # Proje dosyalarını kopyala
 COPY . /var/www/html/
 
-# wp-config.php yoksa entrypoint oluşturacak
+# wp-config.php yoksa entrypoint oluşturacak (Windows CRLF -> LF, aksi halde "no such file" hatası)
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Yazılabilir dizinler
 RUN chown -R www-data:www-data /var/www/html/wp-content

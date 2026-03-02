@@ -719,6 +719,40 @@
   font-size: 13px;
 }
 
+.emc-app-wrapper .text-size-row {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emc-app-wrapper .text-size-row label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--emc-text);
+}
+
+.emc-app-wrapper .text-size-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.emc-app-wrapper #emcTextSize {
+  flex: 1;
+  height: 8px;
+  accent-color: var(--emc-accent);
+  cursor: pointer;
+}
+
+.emc-app-wrapper .text-size-value {
+  min-width: 42px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--emc-accent);
+  text-align: right;
+}
+
 /* Shipping */
 .emc-app-wrapper .shipping-list {
   display: flex;
@@ -1111,6 +1145,363 @@
 .emc-app-wrapper .emc-loading span {
   color: white;
   font-size: 14px;
+}
+
+/* Önizleme sayfası (Sepete Ekle öncesi) */
+.emc-app-wrapper .emc-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.emc-app-wrapper .emc-preview-overlay.show {
+  display: flex;
+}
+
+.emc-app-wrapper .emc-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.85);
+  cursor: pointer;
+}
+
+.emc-app-wrapper .emc-preview-modal {
+  position: relative;
+  background: var(--emc-card-bg);
+  border-radius: var(--emc-radius);
+  box-shadow: var(--emc-shadow-lg);
+  max-width: 920px;
+  width: 100%;
+  max-height: 94vh;
+  overflow-y: auto;
+}
+
+.emc-app-wrapper .emc-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--emc-border);
+}
+
+.emc-app-wrapper .emc-preview-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--emc-text);
+}
+
+.emc-app-wrapper .emc-preview-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--emc-text-light);
+  cursor: pointer;
+  border-radius: var(--emc-radius-sm);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emc-app-wrapper .emc-preview-close:hover {
+  background: var(--emc-border);
+  color: var(--emc-text);
+}
+
+.emc-app-wrapper .emc-preview-desc {
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--emc-text-light);
+  border-bottom: 1px solid var(--emc-border);
+}
+
+.emc-app-wrapper .emc-preview-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 24px;
+}
+
+.emc-app-wrapper .emc-preview-canvas-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.emc-app-wrapper .emc-preview-canvas-wrap {
+  position: relative;
+  background: var(--emc-border);
+  border-radius: var(--emc-radius-sm);
+  overflow: hidden;
+  min-height: 340px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emc-app-wrapper .emc-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  min-height: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+.emc-app-wrapper .emc-preview-zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid var(--emc-accent);
+  background: rgba(212, 168, 75, 0.08);
+  color: var(--emc-accent);
+  border-radius: var(--emc-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--emc-transition);
+  align-self: flex-start;
+}
+
+.emc-app-wrapper .emc-preview-zoom-btn:hover {
+  background: var(--emc-accent);
+  color: white;
+}
+
+.emc-app-wrapper .emc-preview-zoom-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.emc-app-wrapper .emc-preview-size-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--emc-primary);
+  color: white;
+  padding: 6px 10px;
+  border-radius: var(--emc-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.emc-app-wrapper .emc-preview-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emc-app-wrapper .emc-preview-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.emc-app-wrapper .emc-preview-detail span {
+  color: var(--emc-text-light);
+}
+
+.emc-app-wrapper .emc-preview-detail strong {
+  color: var(--emc-text);
+}
+
+.emc-app-wrapper .emc-preview-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--emc-border);
+  font-size: 16px;
+}
+
+.emc-app-wrapper .emc-preview-total strong {
+  color: var(--emc-accent);
+  font-size: 18px;
+}
+
+.emc-app-wrapper .emc-preview-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--emc-border);
+  flex-wrap: wrap;
+}
+
+.emc-app-wrapper .emc-preview-actions .btn-add-cart {
+  flex: 1;
+  min-width: 140px;
+}
+
+.emc-app-wrapper .emc-preview-back-btn {
+  flex: 0 0 auto;
+}
+
+/* Tam sayfa tasarım görüntüleme (büyüteç) */
+.emc-app-wrapper .emc-preview-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.emc-app-wrapper .emc-preview-fullscreen.show {
+  display: flex;
+  flex-direction: column;
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  cursor: pointer;
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--emc-transition);
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.emc-app-wrapper .emc-fs-zoom-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--emc-transition);
+}
+
+.emc-app-wrapper .emc-fs-zoom-btn:hover {
+  background: var(--emc-accent);
+  color: #1a1a2e;
+}
+
+.emc-app-wrapper .emc-fs-zoom-reset {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.emc-app-wrapper .emc-fs-zoom-value {
+  min-width: 48px;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-img-wrap {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  transform-origin: center center;
+  transition: transform 0.15s ease-out;
+}
+
+.emc-app-wrapper .emc-preview-fullscreen-img {
+  width: auto;
+  height: auto;
+  max-width: 95vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--emc-radius-sm);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+@media (min-width: 480px) {
+  .emc-app-wrapper .emc-preview-content {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+  
+  .emc-app-wrapper .emc-preview-canvas-wrap {
+    min-height: 380px;
+  }
+}
+
+@media (min-width: 768px) {
+  .emc-app-wrapper .emc-preview-overlay {
+    padding: 24px;
+  }
+  
+  .emc-app-wrapper .emc-preview-modal {
+    max-width: 960px;
+  }
+  
+  .emc-app-wrapper .emc-preview-canvas-wrap {
+    min-height: 420px;
+  }
+  
+  .emc-app-wrapper .emc-preview-image {
+    min-height: 360px;
+  }
 }
 
 /* Desktop */

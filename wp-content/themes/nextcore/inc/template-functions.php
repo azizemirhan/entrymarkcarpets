@@ -22,8 +22,11 @@ function nextcore_body_classes( $classes ) {
 		$classes[] = 'no-sidebar';
 	}
 
-	// Paspas özelleştir ve sepet sayfasında sidebar yok — tam genişlik
+	// Paspas özelleştir, sepet ve arama sonuç sayfasında sidebar yok — tam genişlik
 	if ( is_page( array( 'paspas-ozellestir', 'customize-carpet', 'kisisellestir', 'sepet' ) ) ) {
+		$classes[] = 'page-no-sidebar';
+	}
+	if ( is_search() ) {
 		$classes[] = 'page-no-sidebar';
 	}
 

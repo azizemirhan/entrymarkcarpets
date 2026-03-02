@@ -42,4 +42,9 @@ require_once ABSPATH . 'wp-settings.php';
 WPCONFIG
 fi
 
+# Veritabanındaki eski site URL'lerini localhost ile değiştir (görseller için)
+if command -v wp >/dev/null 2>&1; then
+    (cd /var/www/html && wp search-replace 'https://demo.entrymarkcarpets.com' "${WP_URL:-http://localhost:9080}" --all-tables --allow-root 2>/dev/null) || true
+fi
+
 exec "$@"
