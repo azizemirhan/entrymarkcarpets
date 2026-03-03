@@ -1689,7 +1689,7 @@
     // Form alanları
     const fields = {
       'emc_add_to_cart': '1',
-      'emc_cart_nonce': restData.nonce || '',
+      'emc_cart_nonce': restData.emc_nonce || restData.nonce || '',
       'shape': state.shape,
       'texture_id': state.textureId || '',
       'texture_name': state.textureName || '',

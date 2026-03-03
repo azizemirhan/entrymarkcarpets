@@ -288,7 +288,7 @@
         method: 'POST',
         credentials: 'include',
         headers: checkoutHeaders,
-        body: JSON.stringify({ nonce, customer })
+        body: JSON.stringify({ nonce: restData.emc_nonce, customer })
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || 'Sipariş oluşturulamadı');

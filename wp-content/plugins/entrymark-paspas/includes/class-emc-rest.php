@@ -360,7 +360,7 @@ class EMC_REST {
 		$cart_id = EMC_Cart::get_cart_id();
 		if ( ! $cart_id ) {
 			$header = $request->get_header( 'X-EMC-Cart-ID' );
-			if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{20,64}$/', $header ) ) {
+			if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{4,64}$/', $header ) ) {
 				$cart_id = sanitize_text_field( $header );
 			}
 		}
@@ -604,7 +604,7 @@ class EMC_REST {
 		}
 		$cart_id = null;
 		$header  = $request->get_header( 'X-EMC-Cart-ID' );
-		if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{20,64}$/', $header ) ) {
+		if ( is_string( $header ) && preg_match( '/^[a-zA-Z0-9_-]{4,64}$/', $header ) ) {
 			$cart_id = sanitize_text_field( $header );
 		}
 		if ( ! $cart_id ) {

@@ -127,9 +127,10 @@ class EMC_Frontend {
 		// Sayfa yüklenirken cookie ile alınan cart_id'yi JS'e ver; fetch cookie göndermese bile sepete erişilebilsin.
 		$cart_id = class_exists( 'EMC_Cart' ) ? EMC_Cart::get_cart_id() : '';
 		wp_localize_script( 'emc-checkout-config', 'EMC_REST_DATA', array(
-			'rest_url' => rest_url( 'entrymark-paspas/v1' ),
-			'nonce'    => wp_create_nonce( 'emc_cart' ),
-			'cart_id'  => $cart_id ?: '',
+			'rest_url'  => rest_url( 'entrymark-paspas/v1' ),
+			'nonce'     => wp_create_nonce( 'wp_rest' ),
+			'emc_nonce' => wp_create_nonce( 'emc_cart' ),
+			'cart_id'   => $cart_id ?: '',
 		) );
 	}
 
@@ -155,7 +156,8 @@ class EMC_Frontend {
 		$cart_url         = $cart_page_id ? get_permalink( (int) $cart_page_id ) : home_url( '/sepet' );
 		wp_localize_script( 'emc-config', 'EMC_REST_DATA', array(
 			'rest_url'     => rest_url( 'entrymark-paspas/v1' ),
-			'nonce'        => wp_create_nonce( 'emc_cart' ),
+			'nonce'        => wp_create_nonce( 'wp_rest' ),
+			'emc_nonce'    => wp_create_nonce( 'emc_cart' ),
 			'checkout_url' => $checkout_url ?: '',
 			'cart_url'     => $cart_url,
 		) );
@@ -229,8 +231,9 @@ class EMC_Frontend {
 		);
 		
 		wp_localize_script( 'emc-cart', 'EMC_REST_DATA', array(
-			'rest_url' => rest_url( 'entrymark-paspas/v1' ),
-			'nonce'    => wp_create_nonce( 'emc_cart' ),
+			'rest_url'  => rest_url( 'entrymark-paspas/v1' ),
+			'nonce'     => wp_create_nonce( 'wp_rest' ),
+			'emc_nonce' => wp_create_nonce( 'emc_cart' ),
 		) );
 		
 		wp_enqueue_style( 'emc-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap', array(), null );
